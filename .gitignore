@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+*.log
+
+# Environment Variables
+.env
+.env.local
+
+# Build outputs (falls später Build-Schritte hinzugefügt werden)
+/dist/
+/build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Premium website source - these ARE the project, not build artifacts
+# (html, css, js in /public/ und /src/ sind das eigentliche Projekt)
