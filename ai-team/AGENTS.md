@@ -4,10 +4,10 @@
 CONNECTED. Orchestrierung, Coding, Git, QA, Security, Fallback für alle Rollen.
 
 ## 🧠 Claude Code v2.1.238 — SENIOR ARCHITECT
-REQUIRES USER ACTION. Installiert; Abo-Weg blockiert durch User-Level
-ANTHROPIC_API_KEY + abgelaufene OAuth-Session. Reparatur: HANDOFFS.md H-001.
-Nach Recovery automatisch: Architektur, Reviews, Security.
-Fallback bis dahin: OpenCode.
+CONNECTED (2026-08-24 getestet: haiku/sonnet/Standard → "OK").
+Abo-Login aktiv; API-Key als Backup unter ANTHROPIC_API_KEY_BACKUP.
+Premium-Modell-Fenster resettet stündlich/5h — Standard ist sonnet.
+Aufgaben: Architektur, Coding, Refactoring, Code Review, Security Review.
 
 ## 🔬 Arena AI — RESEARCH DIRECTOR
 NOT CONNECTED als Agent (keine offizielle API/MCP/CLI).

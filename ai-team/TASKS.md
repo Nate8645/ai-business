@@ -1,7 +1,7 @@
 # TASKS
 
 ## P0 — BLOCKER (User)
-- [ ] H-001: Claude-Abo-Weg reparieren (Key umbenennen + `/login`) → danach Retest
+- [x] H-001: Claude-Abo-Weg reparieren → ✅ CONNECTED (getestet 24.08.)
 - [ ] H-002: GitHub-PAT erneuern → Push-Retest
 
 ## P1 — BUILD (OpenCode, läuft)

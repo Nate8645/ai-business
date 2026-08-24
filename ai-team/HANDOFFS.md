@@ -1,16 +1,10 @@
 # HANDOFFS
 
-## H-001 → USER: Claude-Abo-Weg wiederherstellen
-Kontext: Claude lief über ungültigen API-Key statt Abo; OAuth-Session zusätzlich abgelaufen.
-Schritte (neues PowerShell-Fenster):
-1. Key SICHER umbenennen statt löschen (Wert wird nie angezeigt):
-   $v=[Environment]::GetEnvironmentVariable('ANTHROPIC_API_KEY','User')
-   [Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY_BACKUP',$v,'User')
-   [Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY',$null,'User')
-2. Neues Terminal: `claude` starten → `/login` → Browser-Anmeldung mit Abo-Account.
-3. Test: `claude -p "Reply with exactly: OK"`
-Hinweis: Falls andere Tools den Key brauchen, liegt er unter ANTHROPIC_API_KEY_BACKUP.
-Rückgabe: Ergebnis des Tests an OpenCode → Status-Update in STATUS.md.
+## H-001 ✅ RESOLVED (2026-08-24)
+Claude-Abo-Weg repariert: Key → ANTHROPIC_API_KEY_BACKUP, /login erfolgreich,
+Tests haiku/sonnet/Standard = "OK". Claude wieder SENIOR ARCHITECT.
+Hinweis: Falls ein anderes Tool den alten Key braucht: User-Level-Umgebungs-
+variable ANTHROPIC_API_KEY_BACKUP existiert.
 
 ## H-002 → USER: GitHub-Push reparieren
 1. https://github.com/settings/tokens → Generate new token (classic) → Scope: repo

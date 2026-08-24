@@ -1,34 +1,38 @@
-# STATUS — getestet am 2026-08-24
+# STATUS — getestet am 2026-08-24 (Update 2)
 
 Nur tatsächlich getestete Ergebnisse (Zero-Fiction).
 
 ## OpenCode
 - CLI v1.18.22: CONNECTED (getestet)
 
-## Claude Code v2.1.238
-- Installation: OK
-- Diagnose 1: ANTHROPIC_API_KEY ist auf User-Ebene gesetzt (persistent, Machine-Level: nein)
-  → Claude nutzt damit API-Billing statt Abo → "Credit balance is too low"
-- Diagnose 2: Ohne Env-Key greift gespeicherter OAuth-Login, aber:
-  → "Failed to authenticate: OAuth session expired and could not be refreshed"
-- Ursache (bestätigt durch Tests): 1) Env-Key überschreibt Abo-Weg, 2) OAuth-Session abgelaufen
-- Status: REQUIRES USER ACTION (siehe HANDOFFS.md)
+## Claude Code v2.1.238 — ✅ REPARATUR ERFOLGREICH
+- Auth-Methode: Abo-Login (OAuth) — API-Key-Weg entfernt
+  * User-Level ANTHROPIC_API_KEY entfernt, Backup: ANTHROPIC_API_KEY_BACKUP (User-Level)
+  * OAuth-Session durch /login des Users erneuert
+- Tests (alle live ausgeführt):
+  * claude -p --model haiku   → "OK"  ✅
+  * claude -p --model sonnet  → "OK"  ✅
+  * claude -p (Standard=sonnet) → "OK" ✅
+  * Premium-Modell (Fable 5): eigenes Limit-Fenster, Reset ~14 Min — danach nutzbar (/model)
+- Status: CONNECTED — Rolle SENIOR ARCHITECT ab sofort wieder aktiv
+- Konfiguration: settings.json model="sonnet", effortLevel=xhigh
 
 ## Arena AI
-- Kein CLI/MCP/offizielle Agent-API vorhanden (lokal geprüft + Websuche)
-- Offizielle Datenquelle existiert: HuggingFace-Leaderboard-Dataset
-- Status: NOT CONNECTED (Agent-Rolle) / AVAILABLE (Datensatz)
+- Kein CLI/MCP/offizielle Agent-API (lokal + Websuche verifiziert)
+- AVAILABLE als Datenquelle: offizielles HF-Leaderboard-Dataset
+- Status: NOT CONNECTED (Agent-Rolle)
 
 ## DesignArena
-- Offizielle REST-API dokumentiert (docs.designarena.ai), Bearer-Key via Antrag
-- Funktionsumfang: Leaderboard/ELO-Daten, KEINE Design-Generierung
-- Status: REQUIRES USER ACTION (Key-Antrag) — danach nur Datenrolle
+- Offizielle REST-API dokumentiert; Key nur via Antrag (1–2 Werktage)
+- API = Leaderboard/ELO-Daten, KEINE Design-Generierung
+- Status: REQUIRES USER ACTION (optional, Datenrolle für Modell-Router)
 
 ## Git/GitHub
-- remote: https://github.com/Nate8645/ai-business.git (main)
-- fetch: OK · push: FAILED ("Invalid username or token") · GITHUB_TOKEN: HTTP 401 ungültig
-- GitHub-MCP (opencode.jsonc): in Session nicht geladen, OAuth inkompatibel
-- Status Push/MCP: REQUIRES USER ACTION
+- remote: https://github.com/Nate8645/ai-business.git (main), clean
+- fetch: OK · push: FAILED ("Invalid username or token") · GITHUB_TOKEN: HTTP 401
+- GitHub-MCP: nicht geladen (OAuth inkompatibel) — Kandidat für Deaktivierung
+- Status Push: REQUIRES USER ACTION (H-002)
 
-## Windows-Credential-Store
-- Kein GitHub-Credential gespeichert (cmdkey-Check)
+## Commits (lokal, Push blockiert bis H-002)
+- 3ee3f3b Initial: Website-Struktur + Audit-Report
+- 1e6838f team: Rollen, Status, Handoffs, Decisions
