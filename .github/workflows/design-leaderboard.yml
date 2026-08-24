@@ -1,0 +1,53 @@
+name: Design Leaderboard Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch DesignArena leaderboard
+        env:
+          KEY: ${{ secrets.DESIGNARENA_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::notice::DESIGNARENA_API_KEY not configured - skipping (no fake data)"
+            exit 0
+          fi
+          curl -sf -H "Authorization: Bearer $KEY" \
+            "https://www.designarena.ai/api/v1/leaderboard/models/website" \
+            -o ai-team/data/design-leaderboard-api.json
+
+      - name: Update topModel pointer
+        run: |
+          if [ ! -f ai-team/data/design-leaderboard-api.json ]; then exit 0; fi
+          node -e "
+            const fs = require('fs');
+            const api = JSON.parse(fs.readFileSync('ai-team/data/design-leaderboard-api.json','utf8'));
+            const top = api.data?.[0];
+            if (!top) process.exit(0);
+            const p = 'ai-team/data/design-leaderboard.json';
+            const lb = JSON.parse(fs.readFileSync(p,'utf8'));
+            lb.topModel = top.openRouterId || null;
+            lb.elo = top.elo ?? null;
+            lb.updated = new Date().toISOString().slice(0,10);
+            lb.apiSnapshot = true;
+            fs.writeFileSync(p, JSON.stringify(lb, null, 2) + '\n');
+          "
+
+      - name: Commit snapshot
+        run: |
+          if [ ! -f ai-team/data/design-leaderboard-api.json ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ai-team/data/
+          git diff --cached --quiet || git commit -m "data: weekly designarena leaderboard snapshot"
+          git push

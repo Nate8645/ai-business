@@ -13,11 +13,11 @@ Aufgaben: Architektur, Coding, Refactoring, Code Review, Security Review.
 NOT CONNECTED als Agent (keine offizielle API/MCP/CLI).
 AVAILABLE als Datenquelle: offizielles HF-Leaderboard-Dataset + WebSearch-Fallback.
 
-## 🎨 DesignArena — CREATIVE ADVISOR (Daten)
-REQUIRES USER ACTION: API-Key via designarena.ai/developers/apply (1–2 Werktage).
-API = Leaderboard/ELO-Daten (models/builders/agents), KEINE Generierung →
-nur Modell-Router-Empfehlungen, keine Creative-Umsetzung.
-Creative-Fallback: OpenCode.
+## 🎨 DesignArena — CREATIVE ROUTE (via OpenRouter-Bridge)
+BRIDGE CONNECTED (2026-08-24 getestet): tools/design-route.mjs routet Design-
+Tasks via OpenRouter (Key vorhanden; Free-Modell-Fallback, Kosten 0 €).
+Offizielle API-Key-Antrag offen → danach automatisches Top-Modell-Ranking
+(GitHub-Action, wöchentlich). Creative-Umsetzung: bestes Design-Modell + OpenCode-Review.
 
 ## GITHUB — Source of Truth
 Fetch CONNECTED · Push REQUIRES USER ACTION (neuer PAT, Scope repo).

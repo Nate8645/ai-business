@@ -19,3 +19,13 @@ nie gedruckt, nie committet. Backup-Rename statt Löschung.
 ## D-005 (2026-08-24) — Fallback-Kette verbindlich
 Claude aus → OpenCode architected. Arena aus → WebSearch/HF-Dataset.
 Design aus → OpenCode. Projekt stoppt niemals wegen Einzelagent.
+
+## D-006 (2026-08-24) — Eigene Design-Route statt Fremd-MCP
+Community-Paket `mcp-bench-router` abgelehnt (Supply-Chain-Risiko, fremder
+Code mit Zugriff auf OPENROUTER_API_KEY). Stattdessen eigenes 40-Zeilen-
+Skript tools/design-route.mjs — 100% auditierbar, live getestet ("DESIGN
+ROUTE OK" über Free-Modell, Kosten 0 €).
+
+## D-007 (2026-08-24) — Leaderboard ohne Key = keine erfundenen Rankings
+design-leaderboard.json enthält topModel:null bis DESIGNARENA_API_KEY da ist.
+GitHub-Workflow läuft dann wöchentlich automatisch; ohne Secret tut er nichts.

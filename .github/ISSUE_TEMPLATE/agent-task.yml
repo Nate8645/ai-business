@@ -1,0 +1,42 @@
+name: Agent Task
+description: Aufgabe an einen Team-Agenten übergeben (GitHub als Hub)
+title: "[TASK] "
+labels: ["agent-task"]
+body:
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Ziel-Agent
+      options:
+        - "👑 OpenCode — Master/Integration"
+        - "🧠 Claude Code — Architect/Review"
+        - "🔬 Arena AI — Research (Fallback: OpenCode+WebSearch)"
+        - "🎨 DesignArena — Design Route (via OpenRouter)"
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Aufgabentyp
+      options:
+        - Research / Marktanalyse
+        - Architektur / Refactoring
+        - Code Review / Security Review
+        - UI / UX / Design
+        - Conversion / Content
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Aufgabenbeschreibung
+      description: Was genau soll der Agent tun? Kontext, Ziele, Constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Akzeptanzkriterien
+      description: Wann ist die Aufgabe erledigt? Messbare Kriterien.
+    validations:
+      required: true

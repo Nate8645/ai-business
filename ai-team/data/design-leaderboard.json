@@ -1,0 +1,9 @@
+{
+  "source": "Design Arena — Models Arena / Website (https://designarena.ai)",
+  "license": "Attribution required: Data from Design Arena API",
+  "updated": null,
+  "apiSnapshot": false,
+  "note": "topModel wird automatisch gesetzt, sobald DESIGNARENA_API_KEY vorhanden ist (GitHub-Action oder manuell). Bis dahin faellt der Router auf ein Free-Modell zurueck.",
+  "topModel": null,
+  "elo": null
+}
