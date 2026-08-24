@@ -20,5 +20,7 @@ Offizielle API-Key-Antrag offen → danach automatisches Top-Modell-Ranking
 (GitHub-Action, wöchentlich). Creative-Umsetzung: bestes Design-Modell + OpenCode-Review.
 
 ## GITHUB — Source of Truth
-Fetch CONNECTED · Push REQUIRES USER ACTION (neuer PAT, Scope repo).
+Fetch CONNECTED · Issue-Bridge CONNECTED (funktioniert auch ohne Push-Recht).
+Push BLOCKIERT: gespeicherter Token gehört zu bert-devfasdf (kein Schreibrecht
+auf Nate8645/ai-business) → H-002 User-Aktion (Optionen in HANDOFFS.md).
 Keine Tokens in Dateien, Env oder Chat. ai-team/ ist secret-frei.

@@ -2,7 +2,8 @@
 
 ## P0 — BLOCKER (User)
 - [x] H-001: Claude-Abo-Weg reparieren → ✅ CONNECTED (getestet 24.08.)
-- [ ] H-002: GitHub-PAT erneuern → Push-Retest
+- [ ] H-002: PAT des richtigen Accounts (Nate8645) setzen ODER bert-devfasdf
+      als Collaborator einladen → danach Push-Retest durch OpenCode
 
 ## P1 — BUILD (OpenCode, läuft)
 - [x] Repo-Struktur, README, .gitignore, Website-Basis (Commit 3ee3f3b)

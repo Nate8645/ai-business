@@ -29,3 +29,9 @@ ROUTE OK" über Free-Modell, Kosten 0 €).
 ## D-007 (2026-08-24) — Leaderboard ohne Key = keine erfundenen Rankings
 design-leaderboard.json enthält topModel:null bis DESIGNARENA_API_KEY da ist.
 GitHub-Workflow läuft dann wöchentlich automatisch; ohne Secret tut er nichts.
+
+## D-008 (2026-08-24) — Issue-Bridge als offizieller Handoff-Kanal
+Live getestet: Issues auf dem public Repo sind auch ohne Push-Recht
+erstellbar (Issue #1 erstellt + sofort geschlossen). Aufgaben-Übergabe an
+Arena/DesignArena läuft über Issues (Titel-Prefix [ARENA] / [DESIGN]).
+Voller Flow (Branches/PRs/Workflow) aktiviert automatisch nach H-002.
