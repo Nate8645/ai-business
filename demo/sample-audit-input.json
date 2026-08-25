@@ -1,0 +1,11 @@
+{
+  "_hinweis": "SYNTHETISCHE DEMODATEN - kein reales Unternehmen. Nur zu Demonstrationszwecken.",
+  "unternehmen": "Musterbau Nord GmbH (DEMO)",
+  "branche": "Heizung / Solar",
+  "website": "https://example-demo.invalid",
+  "formular_vorhanden": true,
+  "formularfelder": 15,
+  "antwortzeit_geschaetzt": "meist 2-3 Tage",
+  "kontaktmoeglichkeiten": ["Telefon", "Kontaktformular"],
+  "bemerkungen": "Demo-Lauf zur Funktionszeigen des Audit-Generators."
+}

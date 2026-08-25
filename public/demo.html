@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadPilot AI — Live-Demo: Anfragen-Qualifizierung</title>
+<link rel="stylesheet" href="/src/style.css">
+<style>
+.demo-wrap{max-width:720px;margin:90px auto 60px;padding:0 20px}
+.demo-note-banner{background:#fff8e6;border:1px solid #f0dfa8;border-radius:8px;padding:.8rem 1rem;font-size:.85rem;margin-bottom:1.5rem;color:#7a6520}
+.wizard-step{background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+.wizard-step h3{margin-bottom:1rem;color:var(--primary)}
+.field-row{display:flex;gap:1rem;flex-wrap:wrap}
+.field-col{flex:1;min-width:220px;margin-bottom:1rem}
+.score-result{border-radius:12px;padding:2rem;text-align:center}
+.score-low{background:#ffecec;border:2px solid #e94560}
+.score-med{background:#fff8e6;border:2px solid #e9a13b}
+.score-high{background:#eafaf0;border:2px solid #35b56a}
+.score-big{font-size:3rem;line-height:1}
+.reasons{text-align:left;margin:1.25rem auto 0;max-width:480px}
+.reasons li{padding:.35rem 0;border-bottom:1px dashed rgba(0,0,0,.08);font-size:.92rem;list-style:none}
+select,input,textarea{width:100%;padding:.65rem;border:1px solid #ddd;border-radius:6px;font-family:inherit;font-size:1rem}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <div class="logo">LeadPilot<span> AI</span></div>
+  <nav><ul><li><a href="/index.html">Zurück zur Website</a></li></ul></nav>
+</header>
+
+<div class="demo-wrap">
+  <div class="demo-note-banner"><strong>DEMO / SYNTHETISCHE DATEN:</strong> Diese Seite zeigt die Funktionsweise der Anfragen-Qualifizierung. Es werden keine Daten gesendet oder gespeichert. Die Bewertung folgt transparenten, festen Regeln (unten einsehbar) — keinerlei KI-Zauber, keine erfundenen Ergebnisse.</div>
+
+  <form id="qualify-form">
+    <div class="wizard-step">
+      <h3>1. Kontakt</h3>
+      <div class="field-row">
+        <div class="field-col"><label for="q-name">Name *</label><input id="q-name" required></div>
+        <div class="field-col"><label for="q-firm">Unternehmen *</label><input id="q-firm" required></div>
+      </div>
+      <div class="field-row">
+        <div class="field-col"><label for="q-mail">E-Mail *</label><input id="q-mail" type="email" required></div>
+        <div class="field-col"><label for="q-tel">Telefon (optional)</label><input id="q-tel" type="tel"></div>
+      </div>
+    </div>
+
+    <div class="wizard-step">
+      <h3>2. Anliegen</h3>
+      <div class="field-col"><label for="q-branche">Branche</label>
+        <select id="q-branche">
+          <option value="">— bitte wählen —</option>
+          <option>Heizung / Solar</option><option>Dachdecker</option><option>Sanitär</option>
+          <option>Elektriker</option><option>Küchenbau</option><option>Fensterbau</option>
+          <option>Immobilien</option><option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="field-col"><label for="q-msg">Anfrage *</label><textarea id="q-msg" rows="4" required placeholder="Worum geht es?"></textarea></div>
+    </div>
+
+    <div class="wizard-step">
+      <h3>3. Rahmendaten</h3>
+      <div class="field-row">
+        <div class="field-col"><label for="q-budget">Budget / Projektgröße</label>
+          <select id="q-budget"><option value="">— —</option><option value="l">unter 500 €</option><option value="m">500–999 €</option><option value="h">ab 1.000 €</option></select>
+        </div>
+        <div class="field-col"><label for="q-time">Gewünschter Zeitraum</label>
+          <select id="q-time"><option value="">— —</option><option value="now">sofort</option><option value="month">innerhalb eines Monats</option><option value="later">später / unklar</option></select>
+        </div>
+      </div>
+      <button type="submit" class="cta-btn">Lead scoren (Demo)</button>
+    </div>
+  </form>
+
+  <div id="result" hidden></div>
+
+  <details class="wizard-step"><summary>Scoring-Regeln (transparent)</summary>
+    <ul class="reasons">
+      <li>+2 Budget ab 1.000 € · +1 Budget 500–999 €</li>
+      <li>+2 Zeitraum „sofort“ · +1 „innerhalb eines Monats“</li>
+      <li>+1 Telefonnummer angegeben</li>
+      <li>+1 ausführliche Anfrage (über 200 Zeichen)</li>
+      <li>+2 Branche mit hohem durchschnittlichen Auftragswert</li>
+      <li>≥ 6 Punkte = HIGH · 3–5 = MEDIUM · 0–2 = LOW</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+document.getElementById('qualify-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const v = id => document.getElementById(id).value;
+  let score = 0; const reasons = [];
+  const b = v('q-budget'), t = v('q-time'), tel = v('q-tel').trim(), msg = v('q-msg'), br = v('q-branche');
+  if (b==='h'){score+=2;reasons.push('+2 Budget ab 1.000 €');} else if(b==='m'){score+=1;reasons.push('+1 Budget 500–999 €');}
+  if (t==='now'){score+=2;reasons.push('+2 Zeitraum sofort');} else if(t==='month'){score+=1;reasons.push('+1 innerhalb eines Monats');}
+  if (tel){score+=1;reasons.push('+1 Telefon angegeben');}
+  if (msg.length>200){score+=1;reasons.push('+1 ausführliche Anfrage');}
+  if (br && br!=='Sonstiges'){score+=2;reasons.push('+2 High-Ticket-Branche ('+br+')');}
+  const level = score>=6?'high':(score>=3?'med':'low');
+  const label = {high:'🟢 HIGH INTENT',med:'🟡 MEDIUM INTENT',low:'🔴 LOW INTENT'}[level];
+  const text  = {high:'Sofort persönlich melden — hoher Abschlusswahrscheinlichkeit.',
+                 med:'Innerhalb von 24 Stunden nachfassen.',
+                 low:'Standardantwort genügt; kein Vertriebsaufwand.'}[level];
+  const r = document.getElementById('result');
+  r.hidden = false;
+  r.innerHTML = '<div class="score-result score-'+level+'"><div class="score-big">'+score+'</div>'+
+    '<div style="font-weight:700;font-size:1.2rem;margin:.5rem 0">'+label+'</div>'+
+    '<p>'+text+'</p><ul class="reasons">'+reasons.map(x=>'<li>'+x+'</li>').join('')+
+    (reasons.length?'':'<li>Keine Bonuskriterien erfüllt</li>')+'</ul></div>';
+  r.scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>

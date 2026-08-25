@@ -1,0 +1,2 @@
+id;datum;firma;ansprechpartner;email;telefon;branche;quelle;score;phase;naechster_schritt;next_action_date;notizen;verloren_grund
+1;2026-08-25;(DEMO) Musterbau Nord GmbH;Max Muster;demo@example.invalid;;Heizung/Solar;Demo-Datensatz;med;KONTAKTIERT;Audit anbieten;2026-09-01;SYNTHETISCH - nur Pipeline-Demonstration;
