@@ -1,49 +1,40 @@
-# STATUS — getestet am 2026-08-24 (Update 3)
+# STATUS — getestet am 2026-08-25 (Update 4)
 
-Nur tatsächlich getestete Ergebnisse (Zero-Fiction).
+Nur tatsächlich getestete Ergebnisse (Zero-Fiction). Update 4 fasst die
+Parallelsession-Ergebnisse (Update 3, Account bert-devfasdf) und frische
+Tests dieser Session zusammen.
 
 ## OpenCode
 - CLI v1.18.22: CONNECTED (getestet)
+- MCPs: github-MCP konfiguriert, in Session nicht geladen (OAuth-Inkompatibilität)
 
-## Claude Code v2.1.238 — ✅ REPARATUR ERFOLGREICH
-- Auth-Methode: Abo-Login (OAuth) — API-Key-Weg entfernt
-  * User-Level ANTHROPIC_API_KEY entfernt, Backup: ANTHROPIC_API_KEY_BACKUP (User-Level)
-  * OAuth-Session durch /login des Users erneuert
-- Tests (alle live ausgeführt):
-  * claude -p --model haiku   → "OK"  ✅
-  * claude -p --model sonnet  → "OK"  ✅
-  * claude -p (Standard=sonnet) → "OK" ✅
-  * Premium-Modell (Fable 5): eigenes Limit-Fenster, Reset ~14 Min — danach nutzbar (/model)
-- Status: CONNECTED — Rolle SENIOR ARCHITECT ab sofort wieder aktiv
-- Konfiguration: settings.json model="sonnet", effortLevel=xhigh
+## Claude Code v2.1.238 — CONNECTED
+- Abo-Login aktiv; Test 25.08.: Standard-Modell → "OK"
 
-## Arena AI
-- Kein CLI/MCP/offizielle Agent-API (lokal + Websuche verifiziert)
-- AVAILABLE als Datenquelle: offizielles HF-Leaderboard-Dataset
-- Retest Update 3: weiterhin KEINE Bot-Aktivität im Remote-Repo
-  (0 Issues/PRs, kein [bot]-Autor unter allen Commits)
-- Status: NOT CONNECTED (Agent-Rolle) — Übergabe via Issue-Bridge vorbereitet
+## Git/GitHub
+- Remote main = Local main = 7629cef — alle Team-Commits inkl. Templates/
+  Workflow sind LIVE auf GitHub (Push erfolgte zwischen Update 3 und jetzt,
+  vermutlich durch User/Parallelsession nach Rechtekorrektur)
+- Workflow "Design Leaderboard Snapshot": auf Remote registriert & ACTIVE
+  (API-Check 25.08), noch 0 Runs (Schedule: Mo 04:00 UTC)
+- Issue #1 "[BRIDGE-TEST]": erstellt+geschlossen von bert-devfasdf (21:07),
+  von Nate8645 per Commit referenziert (22:29) → Issue-Bridge FUNKTIONIERT
+- ECHTER PUSH-TEST mit diesem Commit: Ergebnis wird unmittelbar bestätigt
 
-## DesignArena
-- Offizielle REST-API dokumentiert; Key nur via Antrag (1–2 Werktage)
-- API = Leaderboard/ELO-Daten, KEINE Design-Generierung
-- Retest Update 3: GitHub-App-Zugriff von dieser Maschine technisch NICHT
-  prüfbar (/user/installations → HTTP 403), keine Bot-Aktivität im Remote-Repo
-- Status: REQUIRES USER ACTION (optional) — Creative-Fallback: design-route.mjs
+## Arena AI → GitHub
+- Keine offizielle Integration existierbar (mehrfach recherchiert)
+- Keine Arena-Artefakte im Repo (keine Issues/PRs/Commits von Arena)
+- Status: NOT CONNECTED als Agent · AVAILABLE: HF-Dataset + WebSearch
 
-## Git/GitHub (Update 3 — alle Tests frisch ausgeführt)
-- remote: https://github.com/Nate8645/ai-business.git (main) · Repo PUBLIC
-- fetch: OK · push: WEITERHIN BLOCKIERT, Ursache jetzt präzisiert:
-  Gespeichertes Credential gehört zu Account "bert-devfasdf" (Token gültig,
-  Scopes gist/read:org/repo), aber Rechte auf Nate8645/ai-business:
-  push=False admin=False → git push --dry-run = HTTP 403 (live getestet)
-- NEU GETESTET: Issues gehen OHNE Schreibrecht (public repo):
-  Issue #1 erstellt + geschlossen → OpenCode→GitHub-Bridge FUNKTIONIERT
-- Remote-Stand: main @ 09e1f84 · Templates/Workflow nur lokal
-  (in den 4 unpushed Commits) · 0 Workflows auf Remote
-- GitHub-MCP: konfiguriert, in Session nicht geladen (OAuth inkompatibel)
-- Status Push: REQUIRES USER ACTION (H-002, Details in HANDOFFS)
+## DesignArena → GitHub
+- App "Design Arena Export": öffentlich nicht verifizierbar, keine Artefakte
+  im Repo. Installationsliste nur für User sichtbar (Repo Settings → GitHub Apps)
+- Funktionierende Brücke: tools/design-route.mjs via OpenRouter → getestet
+  ("DESIGN ROUTE OK", Free-Modell, 0 €)
+- Status: BRIDGE CONNECTED / offizielle App UNBESTÄTIGT
 
-## Commits (lokal, Push blockiert bis H-002)
-- 3ee3f3b Initial: Website-Struktur + Audit-Report
-- 1e6838f team: Rollen, Status, Handoffs, Decisions
+## Offene Punkte
+1. User: Ist bert-devfasdf dein Account? Falls NEIN: Collaborators/Apps prüfen
+   (Settings → Collaborators & GitHub Apps)
+2. Push-Rechte: bestätigt sich mit diesem Commit-Push (ja/nein)
+3. Optional: DESIGNARENA_API_KEY beantragen → Workflow aktiviert Auto-Ranking
