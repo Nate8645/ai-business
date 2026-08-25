@@ -19,19 +19,24 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// Form submission feedback
+// Contact form: honest demo mode until real backend is connected
 const form = document.querySelector('.contact-form');
-if (form) {
+if (form && form.dataset.mode === 'demo') {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const btn = form.querySelector('.submit-btn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Nachricht gesendet!';
-    btn.style.background = '#4caf50';
+    const note = form.querySelector('.demo-note');
+    const original = btn.textContent;
+    btn.textContent = 'Demo-Modus aktiv';
+    btn.disabled = true;
+    if (note) {
+      note.textContent = 'Demo: Es wurden keine Daten gesendet. Der echte Versand wird mit dem Live-Betrieb aktiviert.';
+      note.style.borderColor = '#c9a227';
+      note.style.background = '#fdf6dd';
+    }
     setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '';
-      form.reset();
-    }, 2000);
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 2500);
   });
 }
