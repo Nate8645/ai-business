@@ -63,3 +63,11 @@ FAZIT: 4-Agent-E2E-Lauf erfolgreich. Arena-Antwort auf #4 folgt asynchron.
 - P3 NEXT: MVP Audit-Generator (templated PDF) + Qualifizierungs-Flow + Demo-Daten (SYNTHETISCH)
 - P4 QUEUED: Sales-Kit + CRM-Struktur
 - USER ACTION vor Launch: Domain/Name-Check, SMTP+SPF/DKIM/DMARC, Impressum-Daten, AVV-Template
+
+## P3+P4 DONE 2026-08-25 (1073315)
+- MVP: demo.html (Qualifizierungs-Wizard, transparentes Scoring, DEMO-markiert),
+  audit-generator.mjs (regelbasierte echte PDF, getestet 3147 bytes),
+  synthetische Demo-Daten (.invalid-Domain, klar gekennzeichnet)
+- Sales-Kit: OUTREACH/FOLLOWUP/CRM.md + leads.csv (Demo-Zeile)
+- Claude Review PASS (keine Secrets, keine Fake-Claims, legal sauber)
+- Arena #7 (Nischenranking) offen -> Abgleich bei Eingang

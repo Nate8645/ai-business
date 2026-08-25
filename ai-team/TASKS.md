@@ -29,3 +29,6 @@ erwartet; Fallbacks bereits durch OpenCode erledigt, Abgleich bei Eingang.
 ## P2 NEXT: Landingpage-Umbau auf LeadPilot-Angebot (DesignArena + OpenCode)
 ## P3 QUEUED: MVP Audit-Generator + Qualifizierungs-Demo (OpenCode + Claude)
 ## ARENA: #6 offen - Abgleich bei Eingang
+
+## P3 DONE / P4 DONE (siehe STATUS)
+## P5 NEXT: SEO+OG Fundament (robots/sitemap/meta) -> dann Launch-Vorbereitung
