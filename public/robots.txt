@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /demo.html
 
-Sitemap: https://leadpilot.example/sitemap.xml
+Sitemap: https://nate8645.github.io/ai-business/sitemap.xml
