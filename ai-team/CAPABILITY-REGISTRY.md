@@ -4,15 +4,18 @@ Single Source of Truth fuer alle Team-Capabilities. Konsolidiert SKILLS.md,
 PLUGINS.md, MCP.md, REPOSITORIES.md, CAPABILITIES.md. Bei Widerspruch gilt
 diese Registry; Detaildateien bleiben Nachschlagewerk.
 
-Status-Legende: VERIFIED | AVAILABLE | AUTH REQUIRED | FAILED | CLAUDE ONLY |
-ADAPTER REQUIRED | REFERENCE ONLY | NOT FOUND
+Status-Legende Capability-Status: VERIFIED | AVAILABLE | AUTH REQUIRED | FAILED |
+CLAUDE ONLY | ADAPTER REQUIRED | REFERENCE ONLY | NOT FOUND
+Technische Zusatzhinweise (keine Capability-Status): ENABLED, DISABLED, ACTIVE,
+NOT APPLICABLE, NOT TESTED, BLOCKED, VERIFIED VIA GITHUB, VERIFIED SHARED,
+VERIFIED LIVE, SHARED VIA FILE-READ
 
 ## Export-/Integrationsdateien
 | Datei | Status |
 |---|---|
 | EXPORT-MANIFEST.md | NOT FOUND |
 | OPENCODE-INTEGRATION.md | NOT FOUND |
-| ai-team/SKILLS.md etc. | VORHANDEN (eigene Doku) |
+| ai-team/SKILLS.md etc. | AVAILABLE (eigene Doku) |
 
 ## AGENTS / SUBAGENTS
 | Name | Typ | Quelle | Funktion | Status |
