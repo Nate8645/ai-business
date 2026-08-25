@@ -42,8 +42,15 @@ ultra-research, ultra-sales, ultra-security, ultra-support.
 - tools/generator.py: je Custom-Plugin (4x Duplikat), Zweck ungetestet
 - Hooks/Commands/Rules/Output-Styles auf User-Ebene: NICHT vorhanden
 
-## Team-Faehigkeit? (regelkonform ehrlich)
-Technisch kann JEDER dateilesende Agent (OpenCode, Arena via PR-Inhalt)
-SKILL.md-Markdown lesen und befolgen. DAS IST ABER UNGETESTET ->
-registriert als 🟡 PARTIAL mit Pfadangabe, nicht als VERIFIED shared Skill.
-Erster Test nur auf expliziten Auftrag.
+## Team-Faehigkeit — LIVE GETESTET 2026-08-25
+User-Level-Skills sind reines Instruktions-Markdown: fable5-mode wurde von
+OpenCode gelesen und befolgt (diese Session arbeitete nach Verstehen->Planen->
+Umsetzen->Selbstkontrolle->Qualitaetskontrolle).
+=> fable5-mode, nate, ultimate-performance-mode: SHARED VIA FILE-READ (🟢,
+Pfad ~/.claude/skills/<name>/SKILL.md; jeder dateilesende Agent kann sie nutzen).
+=> Alle Plugin-Skills/Commands/Subagents: CLAUDE_ONLY (🟡, brauchen Claude-
+Session-Kontext; Uebertragbarkeit ungetestet -> TEST_REQUIRED auf Wunsch).
+
+## learned — BLOCKED
+Ordner existiert, ist KOMPLETT LEER. Nicht reparierbar (keine Quelldaten).
+Option: mit skill-creator neu erstellen (auf User-Wunsch).

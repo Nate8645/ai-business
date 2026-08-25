@@ -1,17 +1,13 @@
-# MCP — Status 2026-08-25
+# MCP — Voll-Kategorisierung (42 inventarisiert, 2026-08-25)
 
-## Konfiguriert
-| MCP | Ort | Ziel | Status |
-|---|---|---|---|
-| github (remote) | ~/.config/opencode/opencode.jsonc -> api.githubcopilot.com/mcp/ | GitHub-Tools in OpenCode | FAILED: OAuth "does not support dynamic client registration"; Tools nie geladen |
+| Kategorie | Anzahl | Details |
+|---|---|---|
+| 🟢 ACTIVE | 0 | kein MCP laeuft in aktuellen Sessions |
+| 🟡 AVAILABLE (Rohmaterial) | 11 | plugins/data/*-inline (mem0+venv, superpowers, nate-os, omniroute, comfy, ecc, everything-code, mem, project-starter, security-guidance) — Daten/env vorhanden, KEINE Server-Configs -> ungetestet |
+| 🟠 AUTH_REQUIRED | ~30 | Plugin-MCPs laut mcp-needs-auth-cache.json (discord, slack, canva, figma, notion, linear, github-ext, firebase, serena, terraform, apollo, clay, ...); Auth nur per User-Login, nie umgehen |
+| 🔴 FAILED | 1 | github remote MCP (opencode.jsonc): laedt nicht |
+| ⚪ INCOMPATIBLE | 1 | Copilot-MCP-Endpoint: "does not support dynamic client registration" |
 
-## Alternativen (geprueft)
-- Offizieller github/github-mcp-server via Docker: Docker-Daemon laeuft nicht -> OPTIONAL, nicht eingerichtet.
-- Claude Plugin-MCPs (~30 Stueck): alle auth-pending -> NOT CONNECTED.
-
-## Entscheidung (D-009)
-Kernworkflow braucht KEIN MCP: git CLI + GitHub REST (Credential Store) +
-claude -p + design-route.mjs decken alles ab. MCP-Fix nur bei konkretem Bedarf.
-
-## Regel
-Kein MCP als CONNECTED markieren ohne geladene Tools in einer Session.
+## Fazit (unveraendert gueltig)
+Kernworkflow braucht kein MCP. Aktivierung von 🟠-Eintraegen nur auf
+expliziten User-Wunsch (jede Auth = Account-Zugriff durch den User selbst).

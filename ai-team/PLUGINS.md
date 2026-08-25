@@ -2,13 +2,25 @@
 
 Quelle der Wahrheit: Dateisystem (~/.claude/plugins). Alte Doku war unvollstaendig.
 
-## A) AKTIV INSTALLIERT (settings.json enabledPlugins)
-| Plugin | Version | Quelle | Status |
-|---|---|---|---|
-| ultra-enterprise-os | 2.1.0 | local-desktop-app-uploads | AVAILABLE |
-| nate-milliarden-addon | 1.0.0 | local-desktop-app-uploads | AVAILABLE |
-| fable-5-enterprise-os | 1.0.0 | local-desktop-app-uploads | AVAILABLE |
-| fable-5-komplett | 1.0.0 | local-desktop-app-uploads | AVAILABLE |
+## A) AKTIV INSTALLIERT (Stand: 2026-08-25, claude plugin list verifiziert)
+### Custom (local-desktop-app-uploads)
+| Plugin | Version | Status |
+|---|---|---|
+| ultra-enterprise-os | 2.1.0 | ENABLED |
+| nate-milliarden-addon | 1.0.0 | ENABLED |
+| fable-5-enterprise-os | 1.0.0 | ENABLED |
+| fable-5-komplett | 1.0.0 | ENABLED |
+### Offiziell (NEU INSTALLIERT 2026-08-25, alle ENABLED)
+| Plugin | Zweck fuer Team |
+|---|---|
+| code-review | Review-Playbooks -> Claude-Reviews |
+| frontend-design | UI-Qualitaetsrichtlinien -> DesignArena/OpenCode-Adaption |
+| feature-dev | Feature-Workflow -> Architektur-Tasks |
+| security-guidance | Security-Checklisten -> Pflicht-Review |
+| pr-review-toolkit | PR-Begutachtung -> GitHub-PRs |
+| skill-creator | Neue Team-Skills erstellen |
+
+Duplikat ultra-enterprise-os@nate-marketplace 1.0.0: DISABLED (bleibt so).
 
 Inhalt je Plugin: eigene agents/, commands/, skills/, tools/generator.py
 (Details in SKILLS.md / CAPABILITIES.md).
