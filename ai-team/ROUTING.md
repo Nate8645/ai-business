@@ -11,6 +11,9 @@
 
 ## Regeln
 
+0. Capability-Check VOR jeder Aufgabe: ai-team/SKILLS.md, PLUGINS.md,
+   CAPABILITIES.md durchsehen -> bestes verfuegbares Werkzeug waehlen;
+   nicht relevante Agenten explizit NOT RELEVANT melden.
 1. Multi-Domain-Aufgabe splitten und parallel verteilen.
 2. Arena ist asynchron: Issue bleibt offen bis Antwort per arena/*-Branch+PR;
    OpenCode arbeitet mit WebSearch-Fallback weiter und integriert Arena-Ergebnis nachtraeglich.

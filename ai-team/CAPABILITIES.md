@@ -15,7 +15,10 @@
 ## 🧠 Claude Code (Senior Architect)
 - Status: VERIFIED
 - Modelle: Abo (sonnet Standard, haiku, fable-5 limit-gefenstert)
-- Skills: 4 (~/.claude/skills) · Plugins: 4 aktiv · MCPs: keine verbunden
+- Skills: 4 user-level + 9 Plugin-Skills (13 unique, s. SKILLS.md)
+- Plugins: 4 aktiv; zusaetzlich 54er Marketplace-Klon + NM als installierbarer Pool
+- Subagents: 24 unique (2 user + 22 plugin)
+- MCPs: keine verbunden (~30 auth-pending, 11 inline-data vorhanden)
 - GitHub: indirekt (lokaler Workspace; OpenCode pusht)
 - Tools: claude -p CLI, Dateizugriff, git diff lesen
 - Staerken: Architektur, Reviews mit echten FAIL-Befunden, Security
