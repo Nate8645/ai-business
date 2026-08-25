@@ -69,6 +69,7 @@ select,input,textarea{width:100%;padding:.65rem;border:1px solid #ddd;border-rad
         </div>
       </div>
       <button type="submit" class="cta-btn">Lead scoren (Demo)</button>
+    <button type="button" id="q-reset" class="cta-btn secondary" style="margin-left:.5rem">Zurücksetzen</button>
     </div>
   </form>
 
@@ -87,6 +88,12 @@ select,input,textarea{width:100%;padding:.65rem;border:1px solid #ddd;border-rad
 </div>
 
 <script>
+document.getElementById('q-reset').addEventListener('click', () => {
+  document.getElementById('qualify-form').reset();
+  const r = document.getElementById('result');
+  r.hidden = true; r.innerHTML = '';
+});
+
 document.getElementById('qualify-form').addEventListener('submit', function(e){
   e.preventDefault();
   const v = id => document.getElementById(id).value;

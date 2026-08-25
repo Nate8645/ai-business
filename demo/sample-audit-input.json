@@ -7,5 +7,7 @@
   "formularfelder": 15,
   "antwortzeit_geschaetzt": "meist 2-3 Tage",
   "kontaktmoeglichkeiten": ["Telefon", "Kontaktformular"],
+  "impressum_check": false,
+  "datenschutz_check": true,
   "bemerkungen": "Demo-Lauf zur Funktionszeigen des Audit-Generators."
 }

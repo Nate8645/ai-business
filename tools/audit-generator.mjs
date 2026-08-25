@@ -43,6 +43,8 @@ function buildAudit(d) {
   if (d.formular_vorhanden && (d.formularfelder || 0) > 12) probs.push("[HOCH] Sehr langes Formular (" + d.formularfelder + " Felder) - Absprungrisiko steigt mit jedem Feld.");
   if (/tag|woche|spaet/i.test(d.antwortzeit_geschaetzt || "")) probs.push("[KRITISCH] Geschätzte Antwortzeit '" + d.antwortzeit_geschaetzt + "' - erste Rueckmeldung sollte in Minuten/Stunden erfolgen.");
   if (!(d.kontaktmoeglichkeiten || []).some(k => /mail/i.test(k))) probs.push("[MITTEL] Keine E-Mail-Kontaktoption erkannt.");
+  if (d.impressum_check === false) probs.push("[HOCH] Impressum nicht auffindbar - rechtlich vorgeschrieben (§5 DDG) und Vertrauenssignal.");
+  if (d.datenschutz_check === false) probs.push("[HOCH] Datenschutzerklaerung nicht auffindbar - Pflicht bei Formularen (DSGVO).");
   probs.push("[PRUEFEN] Double-Opt-In und AVV fuer digitale Anfragen rechtlich verankern (DSGVO).");
   probs.forEach(p => add("- " + p));
   add(null);
