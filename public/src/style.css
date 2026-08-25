@@ -544,3 +544,77 @@ footer {
   font-size: 0.92rem;
   color: var(--text-light);
 }
+
+/* Skip link + mobile nav + checklist + hero price hint */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  z-index: 200;
+}
+
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.hero-price-hint {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.checklist {
+  max-width: 640px;
+  margin: 0 auto 1rem;
+  text-align: left;
+}
+
+.checklist label {
+  display: block;
+  background: #fff;
+  border: 1px solid #e8e8f0;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.checklist input {
+  margin-right: 0.6rem;
+}
+
+.check-result-hint {
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+@media (max-width: 760px) {
+  .navbar nav ul {
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+  }
+
+  .navbar {
+    position: static;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .price-card.featured {
+    transform: none;
+  }
+}

@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
   <header class="navbar">
     <div class="logo">LeadPilot<span> AI</span></div>
     <nav>
@@ -31,6 +32,7 @@
       <p>Für Handwerksbetriebe und Immobilienmakler: Ihre Website-Anfragen werden in Minuten professionell beantwortet und vorsortiert — ohne zusätzliches Personal.</p>
       <a href="#pricing" class="cta-btn">Anfragen-Audit anfordern</a>
       <a href="demo.html" class="cta-btn secondary" style="margin-left:.75rem">Live-Demo der Qualifizierung</a>
+      <p class="hero-price-hint">Audit: einmalig 189&nbsp;€ — Ergebnis in 48 Stunden</p>
       <p class="hero-trust">DSGVO-konform · Antwort in Minuten · Feste Preise</p>
     </div>
   </section>
@@ -52,7 +54,7 @@
     </div>
   </section>
 
-  <main>
+  <main id="main">
     <section id="problem" class="section">
       <h2>Das Problem: Verlorene Anfragen sind teuer</h2>
       <div class="problem-grid">
@@ -93,6 +95,21 @@
           <a class="feature-link" href="#kontakt">Mehr erfahren →</a>
         </div>
       </div>
+    </section>
+
+    <section id="selbstcheck" class="section">
+      <h2>Kostenlose Selbstprüfung: Ihre Anfragen-Strecke</h2>
+      <p class="contact-intro">Beantworten Sie diese 6 Fragen ehrlich. Je öfter Sie „Nein" wählen, desto mehr Anfragenpotenzial verschenken Sie gerade.</p>
+      <fieldset class="checklist">
+        <legend class="visually-hidden">6 Fragen zu Ihrer Anfragen-Strecke</legend>
+        <label><input type="checkbox"> Anfragen werden innerhalb weniger Stunden beantwortet</label>
+        <label><input type="checkbox"> Jede Anfrage enthält direkt: Anliegen, Zeitrahmen und grobes Budget</label>
+        <label><input type="checkbox"> Wir haben einen festen Ablauf für Anfragen außerhalb der Öffnungszeiten</label>
+        <label><input type="checkbox"> Unser Formular fragt nur, was wir wirklich brauchen</label>
+        <label><input type="checkbox"> Impressum und Datenschutzerklärung sind sofort auffindbar</label>
+        <label><input type="checkbox"> Wir wissen, wie viele Anfragen wir im Monat bekommen — und wie viele daraus Aufträge wurden</label>
+      </fieldset>
+      <p class="check-result-hint">3× oder öfter „Nein"? Dann lohnt sich der 189-€-Audit — oder starten Sie mit der <a href="demo.html">Live-Demo</a>.</p>
     </section>
 
     <section id="pricing" class="section">
@@ -143,6 +160,7 @@
         <details><summary>Wie funktioniert der Start?</summary><p>Nach dem Audit oder Ihrer Buchung richten wir Formular-Anbindung, Qualifizierungslogik und Antwortvorlagen ein — in der Regel innerhalb von fünf Werktagen.</p></details>
         <details><summary>Was passiert mit meinen Kundendaten?</summary><p>Datenminimierung, Verarbeitung in Ihrem Auftrag (AVV), Double-Opt-In bei Newsletter-artigen Inhalten. Details klären wir vor dem Start schriftlich.</p></details>
         <details><summary>Gibt es Mindestlaufzeiten?</summary><p>Monatspakete sind monatlich kündbar. Wir wollen halten, was das Ergebnis beweist.</p></details>
+        <details><summary>Was genau ist im Anfragen-Audit enthalten?</summary><p>Wir prüfen Ihre Anfragen-Strecke mit 10 realistischen Testszenarien: Erreichbarkeit, Antwortverhalten, Formular-Qualität und rechtliche Basispunkte. Sie erhalten ein PDF mit priorisierten Befunden und konkreten nächsten Schritten — innerhalb von 48 Stunden.</p></details>
       </div>
     </section>
 
@@ -187,5 +205,18 @@
   </footer>
 
   <script src="src/script.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"Ersetzt LeadPilot meine Mitarbeiter?","acceptedAnswer":{"@type":"Answer","text":"Nein. LeadPilot übernimmt nur die erste Meile: schnelle Antwort und Vorqualifizierung. Die persönlichen Gespräche und Angebote führen weiterhin Sie."}},
+      {"@type":"Question","name":"Wie funktioniert der Start?","acceptedAnswer":{"@type":"Answer","text":"Nach dem Audit oder Ihrer Buchung richten wir Formular-Anbindung, Qualifizierungslogik und Antwortvorlagen ein — in der Regel innerhalb von fünf Werktagen."}},
+      {"@type":"Question","name":"Was passiert mit meinen Kundendaten?","acceptedAnswer":{"@type":"Answer","text":"Datenminimierung, Verarbeitung in Ihrem Auftrag (AVV), Double-Opt-In bei Newsletter-artigen Inhalten. Details klären wir vor dem Start schriftlich."}},
+      {"@type":"Question","name":"Gibt es Mindestlaufzeiten?","acceptedAnswer":{"@type":"Answer","text":"Monatspakete sind monatlich kündbar. Wir wollen halten, was das Ergebnis beweist."}},
+      {"@type":"Question","name":"Was genau ist im Anfragen-Audit enthalten?","acceptedAnswer":{"@type":"Answer","text":"Wir prüfen Ihre Anfragen-Strecke mit 10 realistischen Testszenarien: Erreichbarkeit, Antwortverhalten, Formular-Qualität und rechtliche Basispunkte. Sie erhalten ein PDF mit priorisierten Befunden und konkreten nächsten Schritten — innerhalb von 48 Stunden."}}
+    ]
+  }
+  </script>
 </body>
 </html>
