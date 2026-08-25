@@ -71,3 +71,14 @@ FAZIT: 4-Agent-E2E-Lauf erfolgreich. Arena-Antwort auf #4 folgt asynchron.
 - Sales-Kit: OUTREACH/FOLLOWUP/CRM.md + leads.csv (Demo-Zeile)
 - Claude Review PASS (keine Secrets, keine Fake-Claims, legal sauber)
 - Arena #7 (Nischenranking) offen -> Abgleich bei Eingang
+
+## LOOP-RUNDE 2 DONE 2026-08-25 (54db302)
+- Onboarding/Delivery-Playbook (sales/ONBOARDING.md)
+- Security+DSGVO-Checkliste (sales/SECURITY-DSGVO.md)
+- Content-Plan 10 Artikel (sales/CONTENT-PLAN.md)
+- CRM-Automatisierung: tools/crm-report.mjs (Pipeline/Score/Overdue-Report,
+  Live-Test fand echten Bug -> behoben: MED zaehlte erst nach Fix)
+- Landingpage: 'So funktioniert's' 3-Schritte + Nav-Link
+- Audit-Generator: Impressum/DDG + Datenschutz/DSGVO-Checks neu
+- Demo: Reset-Button; JS-Syntax geprueft
+- Claude Review PASS; Secret-Scan OK
