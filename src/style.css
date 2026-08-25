@@ -134,10 +134,52 @@ section {
   background: #d63451;
 }
 
+/* Trust Badges */
+.trust {
+  max-width: 1200px;
+  margin: -60px auto 0;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.trust-badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.badge-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.badge h3 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  color: var(--primary);
+}
+
+.badge p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
 /* Sections */
 .section {
   background: white;
-  margin-top: -120px;
+  margin-top: 60px;
   clip-path: polygon(0 0, 100% 0, 100% 100px, 0 100%);
   position: relative;
 }
