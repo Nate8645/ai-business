@@ -216,6 +216,25 @@ section {
   color: var(--accent);
 }
 
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.feature-link:hover {
+  transform: translateX(4px);
+}
+
 /* Contact Form */
 .contact-form {
   max-width: 600px;
