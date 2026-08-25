@@ -82,3 +82,11 @@ FAZIT: 4-Agent-E2E-Lauf erfolgreich. Arena-Antwort auf #4 folgt asynchron.
 - Audit-Generator: Impressum/DDG + Datenschutz/DSGVO-Checks neu
 - Demo: Reset-Button; JS-Syntax geprueft
 - Claude Review PASS; Secret-Scan OK
+
+## ?? DEPLOYED LIVE 2026-08-25
+URL: https://nate8645.github.io/ai-business/ (HTTPS, kostenlos, GitHub Pages)
+- Workflow deploy-pages.yml (public/-Artifact) aktiv per API gesetzt
+- Claude Review fing CRITICAL vorher ab: src->public/src Move + relative Pfade (6f2dfab)
+- Live-Verifikation: Index/CSS/JS/demo/robots/sitemap alle HTTP 200
+- demo.html bleibt noindex; robots Disallow; sitemap auf Pages-URL
+- Kosten: 0 EUR. USER ACTION nur noch fuer Custom-Domain (optional)
