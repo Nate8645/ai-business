@@ -53,3 +53,13 @@ Tests dieser Session zusammen.
    umgesetzt ohne erfundene Zahlen.
 
 FAZIT: 4-Agent-E2E-Lauf erfolgreich. Arena-Antwort auf #4 folgt asynchron.
+
+## BUSINESS LOG 2026-08-25
+- P1 DONE: Modellwahl LeadPilot AI (Scorecard D-011), business/BRAND.md
+- P2 DONE (Website): Landingpage komplett auf Angebot umgebaut,
+  DesignBridge-Snippets integriert, Claude FAIL->PASS-Zyklus (5 Befunde
+  behoben inkl. Accessibility label/id, Zero-Fiction-Zahl entfernt,
+  ehrlicher Demo-Modus statt Fake-Versand), Secret-Scan OK, Commit e72e0d5
+- P3 NEXT: MVP Audit-Generator (templated PDF) + Qualifizierungs-Flow + Demo-Daten (SYNTHETISCH)
+- P4 QUEUED: Sales-Kit + CRM-Struktur
+- USER ACTION vor Launch: Domain/Name-Check, SMTP+SPF/DKIM/DMARC, Impressum-Daten, AVV-Template
