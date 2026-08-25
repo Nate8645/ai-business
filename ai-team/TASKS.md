@@ -24,3 +24,8 @@ Tests (21/21 divs) -> Commit 14faba9 gepusht.
 ## T-002 Arena Tasks async - OPEN
 Issue #4 (Trust) + #5 (Leistungsformulierungen): Antworten per arena/* PR
 erwartet; Fallbacks bereits durch OpenCode erledigt, Abgleich bei Eingang.
+
+## P1 DONE (2026-08-25): Marktanalyse + Modellwahl -> business/BRAND.md
+## P2 NEXT: Landingpage-Umbau auf LeadPilot-Angebot (DesignArena + OpenCode)
+## P3 QUEUED: MVP Audit-Generator + Qualifizierungs-Demo (OpenCode + Claude)
+## ARENA: #6 offen - Abgleich bei Eingang
