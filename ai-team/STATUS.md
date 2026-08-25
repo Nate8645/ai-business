@@ -38,3 +38,18 @@ Tests dieser Session zusammen.
    (Settings → Collaborators & GitHub Apps)
 2. Push-Rechte: bestätigt sich mit diesem Commit-Push (ja/nein)
 3. Optional: DESIGNARENA_API_KEY beantragen → Workflow aktiviert Auto-Ranking
+
+## E2E-TEST 2026-08-25 (Update 6) � ALLE KANAELE LIVE
+
+1. Arena: PR #3 verifiziert (arena-ai-coding-agent[bot], Commit 36a2667,
+   Branch arena/01a03568-ai-business) -> CONNECTED VIA GITHUB.
+   PR kommentiert + ohne Merge geschlossen (Testartefakt).
+   Research-Task #4 ([ARENA]) erstellt - Antwort erwartet per arena/*-PR.
+2. DesignArena-Bridge: Trust-Badges-Snippet generiert (Free-Modell, 0 EUR).
+3. OpenCode integriert: trust section in index.html + CSS (db0c132, gepusht).
+4. Claude (Abo): Code-Review -> PASS (HTML/CSS/Zero-Fiction geprueft).
+5. Tests: HTML-Tags balanced 5/5 sections, 18/18 divs.
+6. Research-Fallback (WebSearch): Baymard/ECC - Trust-Signale +20-35% CR;
+   umgesetzt ohne erfundene Zahlen.
+
+FAZIT: 4-Agent-E2E-Lauf erfolgreich. Arena-Antwort auf #4 folgt asynchron.
