@@ -18,3 +18,9 @@
 ## P3 — OPTIONAL
 - [ ] DesignArena-Key-Antrag stellen (Modell-Router-Daten)
 - [ ] GitHub-MCP-OAuth alternativ prüfen oder MCP deaktivieren (aktuell nutzlos)
+## T-001 Feature-Cards (2026-08-25) - DONE
+Team-Lauf: DesignBridge-Snippet -> OpenCode-Adaption -> Claude FAIL->PASS ->
+Tests (21/21 divs) -> Commit 14faba9 gepusht.
+## T-002 Arena Tasks async - OPEN
+Issue #4 (Trust) + #5 (Leistungsformulierungen): Antworten per arena/* PR
+erwartet; Fallbacks bereits durch OpenCode erledigt, Abgleich bei Eingang.

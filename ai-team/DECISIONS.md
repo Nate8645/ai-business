@@ -35,3 +35,7 @@ Live getestet: Issues auf dem public Repo sind auch ohne Push-Recht
 erstellbar (Issue #1 erstellt + sofort geschlossen). Aufgaben-Übergabe an
 Arena/DesignArena läuft über Issues (Titel-Prefix [ARENA] / [DESIGN]).
 Voller Flow (Branches/PRs/Workflow) aktiviert automatisch nach H-002.
+
+## D-010 (2026-08-25) � Review-Zyklus ist verbindlich
+Erster echte FAIL->FIX->PASS-Zyklus (Feature-Cards). Regel: Kein Commit ohne
+Claude-PASS (oder dokumentierter OpenCode-Fallback-Pass bei Claude-Ausfall).
