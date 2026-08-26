@@ -39,7 +39,7 @@ Tests dieser Session zusammen.
 2. Push-Rechte: bestätigt sich mit diesem Commit-Push (ja/nein)
 3. Optional: DESIGNARENA_API_KEY beantragen → Workflow aktiviert Auto-Ranking
 
-## E2E-TEST 2026-08-25 (Update 6) � ALLE KANAELE LIVE
+## E2E-TEST 2026-08-25 (Update 6) � ALLE KANAELE LIVE
 
 1. Arena: PR #3 verifiziert (arena-ai-coding-agent[bot], Commit 36a2667,
    Branch arena/01a03568-ai-business) -> CONNECTED VIA GITHUB.
@@ -97,3 +97,12 @@ URL: https://nate8645.github.io/ai-business/ (HTTPS, kostenlos, GitHub Pages)
 - Sitemap 2 URLs, Landingpage-Ratgeber-Link integriert
 - DesignBridge: CTA-Box-Snippet adaptiert; Claude Review PASS (3 Findings behoben)
 - Bottleneck-Analyse: Traffic=Acquisition -> Content-Engine gestartet
+
+## MODEL POOL INTEGRATION 2026-08-26
+- Free model discovery: OpenCode v1.18.23, Ollama v0.32.15, 23 free models identified
+- OpenCode Free Models: 6 verified/available (big-pickle VERIFIED, 5 AVAILABLE)
+- Ollama Local Models: 5 installed, 4 VERIFIED (qwen3:0.6b, 1.7b, 4b, llama3.2), qwen3:8b OOM-hardware limited
+- OpenRouter Free Models: 17 :free models discovered, all AVAILABLE but NOT TESTED
+- Cost Control: ON, PAID AUTO-ROUTE: DISABLED
+- Free-First Routing: AKTIV (OpenCode → Ollama → OpenRouter → BLOCKED)
+- New Content: wie-schnell-antworten.html + heizung-solar.html committed + Pages deploy verified
