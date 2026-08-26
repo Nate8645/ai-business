@@ -2,12 +2,15 @@
 
 | Aufgabentyp | Primaer | Kanal/Befehl | Fallback | Sync |
 |---|---|---|---|---|
-| Architektur / komplexes Coding | Claude Code | `claude -p "<task>"` | OpenCode | ja |
-| Code-/Security-Review | Claude Code | `claude -p "Review git diff"` | OpenCode | ja |
+| Architektur / komplexes Coding | Claude Code | `claude -p "<task>"` | Free Model Pool | ja |
+| Code-/Security-Review | Claude Code | `claude -p "Review git diff"` | Free Model Pool | ja |
 | UI/UX Snippet / Design-Variante | DesignArena | `node tools/design-route.mjs` | OpenCode | ja |
 | Markt-/Wettbewerbsrecherche | Arena AI | Issue `[ARENA] <task>` | OpenCode WebSearch | nein (async) |
 | Strategie / Ideen | Arena AI | wie oben | OpenCode | nein (async) |
 | Integration / Testing / Git / QA | OpenCode | direkt | - | ja |
+| Coding (Free-First) | Free Model Pool | opencode/big-pickle → Ollama → OpenRouter Free | BLOCKED | ja |
+| Simple/Fast Tasks | Free Model Pool | qwen3:1.7b → qwen3:0.6b → lightning-free | BLOCKED | ja |
+| Large Context | Free Model Pool | nemotron-3-ultra:free → nemotron-3-super:free | BLOCKED | ja |
 
 ## Regeln
 

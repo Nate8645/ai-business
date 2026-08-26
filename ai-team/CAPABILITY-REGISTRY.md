@@ -10,6 +10,18 @@ Technische Zusatzhinweise (keine Capability-Status): ENABLED, DISABLED, ACTIVE,
 NOT APPLICABLE, NOT TESTED, BLOCKED, VERIFIED VIA GITHUB, VERIFIED SHARED,
 VERIFIED LIVE, SHARED VIA FILE-READ
 
+## MODEL POOL (28 Free Models)
+| Provider | Anzahl | Kosten | Rate-Limit | Status |
+|---|---|---|---|---|
+| OpenCode Free | 6 | $0 | Provider-dependent | 🟡 AVAILABLE (1 VERIFIED) |
+| Ollama Local | 5 | $0 | KEIN | 🟢 INSTALLED |
+| OpenRouter Free | 17 | $0 | Provider-dependent | 🟡 AVAILABLE |
+| **GESAMT** | **28** | **$0** | - | - |
+
+Details: ai-team/model-pool/ (OPENCODE-FREE-MODELS.md, OLLAMA-MODELS.md, MODEL-ROUTING.md, MODEL-REGISTRY.md)
+
+Free-First Routing: AKTIV | Cost Protection: ON | Paid Auto-Route: DISABLED
+
 ## Export-/Integrationsdateien
 | Datei | Status |
 |---|---|
