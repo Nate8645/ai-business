@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Business System — Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a25;
+            --border: #1e1e2e;
+            --border-active: #3b82f6;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --green: #22c55e;
+            --yellow: #eab308;
+            --red: #ef4444;
+            --purple: #a855f7;
+            --orange: #f97316;
+            --cyan: #06b6d4;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-logo .subtitle {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: var(--text-dim);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-footer .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .sidebar-footer .status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 240px;
+            padding: 20px 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h2 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .page-header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: var(--bg-card-hover); border-color: var(--border-active); }
+        .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+        .btn.primary:hover { background: #2563eb; }
+        .btn.danger { border-color: var(--red); color: var(--red); }
+        .btn.danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+        /* STAT CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-active);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-card .change {
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .stat-card .change.positive { color: var(--green); }
+        .stat-card .change.negative { color: var(--red); }
+        .stat-card .change.neutral { color: var(--text-dim); }
+
+        /* PANELS */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .panel-body {
+            padding: 15px 18px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-track { background: transparent; }
+        .panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        /* TEAM TABLE */
+        .team-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .team-table th {
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .team-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .team-table tr:last-child td { border-bottom: none; }
+        .team-table tr:hover td { background: var(--bg-card-hover); }
+
+        .member-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .member-name .info .name { font-weight: 500; }
+        .member-name .info .role { font-size: 11px; color: var(--text-dim); }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.active { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .status-badge.connected { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+        .status-badge.available { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+        .status-badge.warning { background: rgba(249, 115, 22, 0.15); color: var(--orange); }
+
+        .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-badge.active .dot { background: var(--green); }
+        .status-badge.connected .dot { background: var(--accent); }
+        .status-badge.available .dot { background: var(--yellow); }
+        .status-badge.warning .dot { background: var(--orange); }
+
+        /* TASK BOARD */
+        .task-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .task-item:hover {
+            border-color: var(--border-active);
+            background: var(--bg-card-hover);
+        }
+
+        .task-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            width: 24px;
+            text-align: center;
+        }
+
+        .task-info { flex: 1; }
+        .task-info .title { font-size: 13px; font-weight: 500; }
+        .task-info .meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+        .task-status {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .task-status.ready { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .task-status.pending { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+        .task-status.queued { background: rgba(113, 113, 122, 0.15); color: var(--text-dim); }
+        .task-status.progress { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+        .task-status.done { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+
+        /* PHASE PROGRESS */
+        .phase-bar {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .phase-bar .fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+
+        .phase-bar .fill.p1 { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+        .phase-bar .fill.p2 { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+        .phase-bar .fill.p3 { background: linear-gradient(90deg, var(--green), var(--purple)); }
+
+        /* REVENUE CHART */
+        .chart-container {
+            padding: 15px 18px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 120px;
+            padding: 10px 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent), var(--cyan));
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.5s;
+            position: relative;
+        }
+
+        .chart-bar:hover { opacity: 0.8; }
+
+        .chart-bar .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .chart-bar:hover .tooltip { display: block; }
+
+        .chart-labels {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chart-labels span {
+            flex: 1;
+            text-align: center;
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .modal h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .modal .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .modal input, .modal select, .modal textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .modal input:focus, .modal select:focus, .modal textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 2px;
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-dim);
+            transition: all 0.2s;
+        }
+
+        .tab:hover { color: var(--text); }
+        .tab.active { background: var(--accent); color: white; }
+
+        /* PAGE SECTIONS */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* MODEL GRID */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .model-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .model-card:hover {
+            border-color: var(--border-active);
+        }
+
+        .model-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .model-info { flex: 1; min-width: 0; }
+        .model-info .name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .model-info .meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+        /* LIVE LOG */
+        .log-container {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .log-line {
+            display: flex;
+            gap: 8px;
+            padding: 2px 0;
+        }
+
+        .log-time { color: var(--text-dim); white-space: nowrap; }
+        .log-agent { color: var(--accent); white-space: nowrap; min-width: 100px; }
+        .log-msg { color: var(--text); }
+        .log-line.error .log-msg { color: var(--red); }
+        .log-line.success .log-msg { color: var(--green); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .panels-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar .nav-item span:not(.icon) { display: none; }
+            .sidebar-logo h1 { font-size: 14px; }
+            .sidebar-logo .subtitle { display: none; }
+            .main { margin-left: 60px; padding: 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <h1>AI BUSINESS</h1>
+        <div class="subtitle">Admin Dashboard v1.0</div>
+    </div>
+
+    <div class="nav-item active" onclick="showPage('overview')">
+        <span class="icon">📊</span><span>Übersicht</span>
+    </div>
+    <div class="nav-item" onclick="showPage('team')">
+        <span class="icon">👥</span><span>Team (37)</span>
+        <span class="badge">37</span>
+    </div>
+    <div class="nav-item" onclick="showPage('board')">
+        <span class="icon">📋</span><span>Baustelle</span>
+        <span class="badge">14</span>
+    </div>
+    <div class="nav-item" onclick="showPage('models')">
+        <span class="icon">🤖</span><span>AI Models</span>
+        <span class="badge">28</span>
+    </div>
+    <div class="nav-item" onclick="showPage('revenue')">
+        <span class="icon">💰</span><span>Revenue</span>
+    </div>
+    <div class="nav-item" onclick="showPage('crypto')">
+        <span class="icon">₿</span><span>Crypto</span>
+    </div>
+    <div class="nav-item" onclick="showPage('logs')">
+        <span class="icon">📝</span><span>Live Log</span>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="status">
+            <span class="dot"></span>
+            <span>System Online</span>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+    <!-- ===== OVERVIEW PAGE ===== -->
+    <div id="page-overview" class="page active">
+        <div class="page-header">
+            <h2>Dashboard Übersicht</h2>
+            <div class="actions">
+                <button class="btn" onclick="refreshData()">↻ Aktualisieren</button>
+                <button class="btn primary" onclick="showPage('board')">→ Zur Baustelle</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Revenue Heute</div>
+                <div class="value" id="revenue-today">€0</div>
+                <div class="change neutral">Noch keine Transaktionen</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Revenue Monat</div>
+                <div class="value" id="revenue-month">€0</div>
+                <div class="change neutral">Ziel: €5.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">AI Kosten</div>
+                <div class="value" style="color: var(--green);">$0</div>
+                <div class="change positive">28 Free Models aktiv</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Team Status</div>
+                <div class="value" style="font-size: 22px;">37 / 37</div>
+                <div class="change positive">Alle Agents bereit</div>
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Phase Fortschritt</h3>
+                    <button class="btn" onclick="showPage('board')">Alle Tasks →</button>
+                </div>
+                <div class="panel-body">
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
+                            <span>Phase 1: E-Commerce MVP</span>
+                            <span id="phase1-pct">0%</span>
+                        </div>
+                        <div class="phase-bar"><div class="fill p1" id="phase1-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
+                            <span>Phase 2: Crypto Integration</span>
+                            <span id="phase2-pct">0%</span>
+                        </div>
+                        <div class="phase-bar"><div class="fill p2" id="phase2-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
+                            <span>Phase 3: Full Autopilot</span>
+                            <span id="phase3-pct">0%</span>
+                        </div>
+                        <div class="phase-bar"><div class="fill p3" id="phase3-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 12px; background: var(--bg); border-radius: 8px; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: var(--text-dim);">Gesamt-Fortschritt</span>
+                            <span style="font-weight: 600;" id="total-pct">0%</span>
+                        </div>
+                        <div class="phase-bar"><div class="fill" id="total-bar" style="width: 0%; background: linear-gradient(90deg, var(--accent), var(--green));"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Live Log</h3>
+                    <button class="btn" onclick="showPage('logs')">Alle →</button>
+                </div>
+                <div class="panel-body">
+                    <div class="log-container" id="overview-log">
+                        <div class="log-line"><span class="log-time">--:--</span><span class="log-agent">SYSTEM</span><span class="log-msg">Dashboard geladen</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TEAM PAGE ===== -->
+    <div id="page-team" class="page">
+        <div class="page-header">
+            <h2>👥 AI Business Team (37 Mitglieder)</h2>
+            <div class="actions">
+                <button class="btn" onclick="filterTeam('all')">Alle</button>
+                <button class="btn" onclick="filterTeam('admin')">Admin</button>
+                <button class="btn" onclick="filterTeam('core')">Core</button>
+                <button class="btn" onclick="filterTeam('model')">Models</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-body" style="max-height: 70vh;">
+                <table class="team-table" id="team-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mitglied</th>
+                            <th>Rolle</th>
+                            <th>Verbindung</th>
+                            <th>Status</th>
+                            <th>Kosten</th>
+                        </tr>
+                    </thead>
+                    <tbody id="team-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BOARD PAGE ===== -->
+    <div id="page-board" class="page">
+        <div class="page-header">
+            <h2>📋 Construction Site — Baustelle</h2>
+            <div class="actions">
+                <button class="btn primary" onclick="addTask()">+ Neuer Task</button>
+                <button class="btn" onclick="resetBoard()">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="filterBoard('all', this)">Alle (14)</div>
+            <div class="tab" onclick="filterBoard('ready', this)">Ready</div>
+            <div class="tab" onclick="filterBoard('pending', this)">Pending</div>
+            <div class="tab" onclick="filterBoard('queued', this)">Queued</div>
+            <div class="tab" onclick="filterBoard('progress', this)">In Arbeit</div>
+            <div class="tab" onclick="filterBoard('done', this)">Done</div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-body" style="max-height: 65vh;">
+                <div class="task-list" id="task-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODELS PAGE ===== -->
+    <div id="page-models" class="page">
+        <div class="page-header">
+            <h2>🤖 AI Models (28 Free)</h2>
+            <div class="actions">
+                <span style="font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 5px;">💰 Gesamtkosten: $0.00</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="filterModels('all', this)">Alle (28)</div>
+            <div class="tab" onclick="filterModels('ollama', this)">Ollama (5)</div>
+            <div class="tab" onclick="filterModels('opencode', this)">OpenCode (6)</div>
+            <div class="tab" onclick="filterModels('openrouter', this)">OpenRouter (17)</div>
+        </div>
+
+        <div class="model-grid" id="model-grid"></div>
+    </div>
+
+    <!-- ===== REVENUE PAGE ===== -->
+    <div id="page-revenue" class="page">
+        <div class="page-header">
+            <h2>💰 Revenue Dashboard</h2>
+            <div class="actions">
+                <button class="btn" onclick="simulateSale()">Simulation: Verkauf</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">E-Commerce</div>
+                <div class="value" id="rev-ecommerce">€0</div>
+                <div class="change neutral">Shopify Store</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Crypto</div>
+                <div class="value" id="rev-crypto">€0</div>
+                <div class="change neutral">Trading + Staking</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">AI Services</div>
+                <div class="value" id="rev-ai">€0</div>
+                <div class="change neutral">B2B Verkäufe</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Affiliate</div>
+                <div class="value" id="rev-affiliate">€0</div>
+                <div class="change neutral">Partner-Links</div>
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Revenue Letzte 30 Tage</h3>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bars" id="revenue-chart"></div>
+                    <div class="chart-labels" id="revenue-labels"></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Letzte Transaktionen</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="transactions-list">
+                        <div style="text-align: center; padding: 20px; color: var(--text-dim); font-size: 12px;">
+                            Noch keine Transaktionen. Starte den Store um Revenue zu generieren.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CRYPTO PAGE ===== -->
+    <div id="page-crypto" class="page">
+        <div class="page-header">
+            <h2>₿ Crypto Portfolio</h2>
+            <div class="actions">
+                <button class="btn primary" onclick="showPage('board')">→ Phase 2 aktivieren</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Portfolio Wert</div>
+                <div class="value">€0</div>
+                <div class="change neutral">Phase 2 noch nicht aktiv</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Staking APY</div>
+                <div class="value" style="color: var(--green);">5-15%</div>
+                <div class="change positive">Ziel: Auto-Staking</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Trading PnL</div>
+                <div class="value">€0</div>
+                <div class="change neutral">Bot noch nicht aktiv</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Gas Fees</div>
+                <div class="value" style="color: var(--green);">$0</div>
+                <div class="change positive">Optimiert via AI</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>Crypto Strategien</h3>
+            </div>
+            <div class="panel-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="padding: 15px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">🏦 Auto-Staking</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">Stablecoins (USDC/USDT) → 5-15% APY</div>
+                        <div class="status-badge queued"><span class="dot"></span> Phase 2</div>
+                    </div>
+                    <div style="padding: 15px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">📈 DCA Trading</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">BTC/ETH Dollar-Cost Averaging</div>
+                        <div class="status-badge queued"><span class="dot"></span> Phase 2</div>
+                    </div>
+                    <div style="padding: 15px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">🌊 Yield Farming</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">DeFi-Pools optimieren via AI</div>
+                        <div class="status-badge queued"><span class="dot"></span> Phase 2</div>
+                    </div>
+                    <div style="padding: 15px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">🤖 AI Signal Trading</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">Marktanalyse → Trade-Empfehlungen</div>
+                        <div class="status-badge queued"><span class="dot"></span> Phase 2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOGS PAGE ===== -->
+    <div id="page-logs" class="page">
+        <div class="page-header">
+            <h2>📝 Live System Log</h2>
+            <div class="actions">
+                <button class="btn" onclick="clearLogs()">Leeren</button>
+                <button class="btn" onclick="exportLogs()">Exportieren</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-body" style="max-height: 70vh; font-family: 'Consolas', monospace;">
+                <div class="log-container" id="full-log"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-overlay" id="task-modal">
+    <div class="modal">
+        <h3>Neuen Task hinzufügen</h3>
+        <div class="form-group">
+            <label>Task Name</label>
+            <input type="text" id="task-name" placeholder="z.B. Shopify Store erstellen">
+        </div>
+        <div class="form-group">
+            <label>Zugewiesener Agent</label>
+            <select id="task-agent">
+                <option>OpenCode</option>
+                <option>Claude Code</option>
+                <option>Arena AI</option>
+                <option>DesignArena</option>
+                <option>Windows Use</option>
+                <option>qwen3:4b (lokal)</option>
+                <option>nemotron-3-ultra-free</option>
+                <option>nemotron-3-super-120b:free</option>
+                <option>big-pickle</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Phase</label>
+            <select id="task-phase">
+                <option value="1">Phase 1: E-Commerce MVP</option>
+                <option value="2">Phase 2: Crypto Integration</option>
+                <option value="3">Phase 3: Full Autopilot</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Priorität</label>
+            <select id="task-priority">
+                <option value="critical">Kritisch</option>
+                <option value="high">Wichtig</option>
+                <option value="normal" selected>Normal</option>
+            </select>
+        </div>
+        <div class="actions">
+            <button class="btn" onclick="closeModal()">Abbrechen</button>
+            <button class="btn primary" onclick="saveTask()">Task erstellen</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== DATA =====
+const teamMembers = [
+    { id: 1, name: "Windows Use", role: "System Admin / Platform Ops", type: "admin", icon: "🪟", conn: "PowerShell 5.1, WMI, Hyper-V", status: "active", cost: "$0" },
+    { id: 2, name: "OpenCode", role: "Master Orchestrator", type: "admin", icon: "👑", conn: "CLI + GitHub MCP", status: "active", cost: "$0" },
+    { id: 3, name: "Claude Code", role: "Senior Architect", type: "admin", icon: "🧠", conn: "CLI via Abo", status: "connected", cost: "$0" },
+    { id: 4, name: "Arena AI", role: "Research Agent", type: "core", icon: "🔬", conn: "GitHub App", status: "connected", cost: "$0" },
+    { id: 5, name: "DesignArena", role: "Creative/Design", type: "core", icon: "🎨", conn: "Bridge → OpenRouter", status: "connected", cost: "$0" },
+    { id: 6, name: "qwen3:0.6b", role: "Ultra-leicht / Speed", type: "model", icon: "🟢", conn: "Ollama Lokal", status: "active", cost: "$0" },
+    { id: 7, name: "qwen3:1.7b", role: "Balanced Coding+Reasoning", type: "model", icon: "🟢", conn: "Ollama Lokal", status: "active", cost: "$0" },
+    { id: 8, name: "qwen3:4b", role: "Starke Reasoning", type: "model", icon: "🟢", conn: "Ollama Lokal", status: "active", cost: "$0" },
+    { id: 9, name: "llama3.2", role: "General Purpose", type: "model", icon: "🟢", conn: "Ollama Lokal", status: "active", cost: "$0" },
+    { id: 10, name: "qwen3:8b", role: "Maximum (HW-limited)", type: "model", icon: "🔴", conn: "Ollama Lokal", status: "warning", cost: "$0" },
+    { id: 11, name: "big-pickle", role: "General Purpose (VERIFIED)", type: "model", icon: "🟡", conn: "OpenCode Free", status: "active", cost: "$0" },
+    { id: 12, name: "hy3-free", role: "Coding + Reasoning", type: "model", icon: "🟡", conn: "OpenCode Free", status: "available", cost: "$0" },
+    { id: 13, name: "mimo-v2.5-free", role: "MiMo Coding", type: "model", icon: "🟡", conn: "OpenCode Free", status: "available", cost: "$0" },
+    { id: 14, name: "muse-spark-1.2", role: "Creative Writing", type: "model", icon: "🟡", conn: "OpenCode Free", status: "available", cost: "$0" },
+    { id: 15, name: "nemotron-3-ultra-free", role: "Top-Tier NVIDIA", type: "model", icon: "🟡", conn: "OpenCode Free", status: "available", cost: "$0" },
+    { id: 16, name: "nemotron-3.5-lightning", role: "Lightning Speed", type: "model", icon: "🟡", conn: "OpenCode Free", status: "available", cost: "$0" },
+    { id: 17, name: "cohere/north-mini-code", role: "Code-spezifisch", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 18, name: "dots-3-note-preview", role: "Note-taking", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 19, name: "gemma-4-26b", role: "Google Gemma 4 26B MoE", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 20, name: "gemma-4-31b", role: "Google Gemma 4 31B", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 21, name: "lfm-2.5-2.6b", role: "Liquid LFM", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 22, name: "minimax-m2.7", role: "Minimax M2.7", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 23, name: "minimax-m3", role: "Minimax M3", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 24, name: "nemotron-3-nano-30b", role: "NVIDIA Nano Omni", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 25, name: "nemotron-3-super-120b", role: "NVIDIA Super 120B", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 26, name: "nemotron-3-ultra-550b", role: "NVIDIA Ultra 550B", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 27, name: "nemotron-3.5-content-safety", role: "Content Safety", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 28, name: "nemotron-3.5-lightning", role: "NVIDIA Lightning", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 29, name: "laguna-s-2.1", role: "Poolside Code S", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 30, name: "laguna-xs-2.1", role: "Poolside Code XS", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 31, name: "inkling-small", role: "Thinking Machines Small", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 32, name: "inkling", role: "Thinking Machines", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 33, name: "glm-5.2", role: "z-ai GLM 5.2", type: "model", icon: "🔵", conn: "OpenRouter :free", status: "available", cost: "$0" },
+    { id: 34, name: "Arena Bridge", role: "17 OpenRouter via Bridge", type: "model", icon: "🔬", conn: "GitHub App + Bridge", status: "connected", cost: "$0" },
+    { id: 35, name: "Model Pool", role: "AI Models Registry", type: "extended", icon: "📦", conn: "model-pool/", status: "active", cost: "$0" },
+    { id: 36, name: "Tools", role: "Automation Scripts", type: "extended", icon: "🔧", conn: "tools/*.mjs", status: "active", cost: "$0" },
+    { id: 37, name: "Business Division", role: "Strategy/Sales", type: "extended", icon: "💼", conn: "business/, sales/", status: "active", cost: "$0" },
+];
+
+const tasks = [
+    { id: 1, name: "Server-Infrastruktur (Docker + Node)", agent: "Windows Use", phase: 1, priority: "critical", status: "ready" },
+    { id: 2, name: "Shopify Store erstellen", agent: "OpenCode + Claude Code", phase: 1, priority: "critical", status: "ready" },
+    { id: 3, name: "10 Produkte recherchieren", agent: "Arena AI", phase: 1, priority: "critical", status: "ready" },
+    { id: 4, name: "Checkout Flow optimieren", agent: "Claude Code", phase: 1, priority: "critical", status: "ready" },
+    { id: 5, name: "Payment Gateway (Stripe)", agent: "OpenCode", phase: 1, priority: "critical", status: "ready" },
+    { id: 6, name: "SEO-Texte für 10 Produkte", agent: "qwen3:4b + nemotron-3-ultra", phase: 1, priority: "high", status: "pending" },
+    { id: 7, name: "Kundensupport-KI", agent: "nemotron-3-super-120b", phase: 1, priority: "high", status: "pending" },
+    { id: 8, name: "Marketing Assets (Social)", agent: "Arena AI + DesignArena", phase: 1, priority: "high", status: "pending" },
+    { id: 9, name: "Performance Lighthouse 90+", agent: "Claude Code", phase: 1, priority: "high", status: "pending" },
+    { id: 10, name: "Monitoring Dashboard", agent: "OpenCode", phase: 1, priority: "high", status: "pending" },
+    { id: 11, name: "Crypto-Payment Gateway", agent: "OpenCode", phase: 2, priority: "normal", status: "queued" },
+    { id: 12, name: "Portfolio Tracker API", agent: "Claude Code", phase: 2, priority: "normal", status: "queued" },
+    { id: 13, name: "DeFi Yield Research", agent: "Arena AI + nemotron", phase: 2, priority: "normal", status: "queued" },
+    { id: 14, name: "Auto-Rebalancing Bot", agent: "OpenCode + Claude Code", phase: 2, priority: "normal", status: "queued" },
+];
+
+const models = [
+    { name: "qwen3:0.6b", provider: "Ollama", group: "ollama", size: "522 MB", verified: true, icon: "🟢" },
+    { name: "qwen3:1.7b", provider: "Ollama", group: "ollama", size: "1.4 GB", verified: true, icon: "🟢" },
+    { name: "qwen3:4b", provider: "Ollama", group: "ollama", size: "2.5 GB", verified: true, icon: "🟢" },
+    { name: "llama3.2", provider: "Ollama", group: "ollama", size: "2.0 GB", verified: true, icon: "🟢" },
+    { name: "qwen3:8b", provider: "Ollama", group: "ollama", size: "5.2 GB", verified: false, icon: "🔴" },
+    { name: "big-pickle", provider: "OpenCode", group: "opencode", size: "—", verified: true, icon: "⭐" },
+    { name: "hy3-free", provider: "OpenCode", group: "opencode", size: "—", verified: false, icon: "🟡" },
+    { name: "mimo-v2.5-free", provider: "OpenCode", group: "opencode", size: "—", verified: false, icon: "🟡" },
+    { name: "muse-spark-1.2", provider: "OpenCode", group: "opencode", size: "—", verified: false, icon: "🟡" },
+    { name: "nemotron-3-ultra-free", provider: "OpenCode", group: "opencode", size: "—", verified: false, icon: "🟡" },
+    { name: "nemotron-3.5-lightning-free", provider: "OpenCode", group: "opencode", size: "—", verified: false, icon: "🟡" },
+    { name: "cohere/north-mini-code:free", provider: "OpenRouter", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "dots-3-note-preview:free", provider: "OpenRouter", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "gemma-4-26b:free", provider: "Google", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "gemma-4-31b:free", provider: "Google", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "lfm-2.5-2.6b:free", provider: "Liquid", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "minimax-m2.7:free", provider: "Minimax", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "minimax-m3:free", provider: "Minimax", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "nemotron-3-nano-30b:free", provider: "NVIDIA", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "nemotron-3-super-120b:free", provider: "NVIDIA", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "nemotron-3-ultra-550b:free", provider: "NVIDIA", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "nemotron-3.5-content-safety:free", provider: "NVIDIA", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "nemotron-3.5-lightning:free", provider: "NVIDIA", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "laguna-s-2.1:free", provider: "Poolside", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "laguna-xs-2.1:free", provider: "Poolside", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "inkling-small:free", provider: "Thinking Machines", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "inkling:free", provider: "Thinking Machines", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+    { name: "glm-5.2:free", provider: "z-ai", group: "openrouter", size: "—", verified: false, icon: "🔵" },
+];
+
+let logs = [];
+let revenueData = { ecom: 0, crypto: 0, ai: 0, affiliate: 0, transactions: [] };
+
+// ===== NAVIGATION =====
+function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    event.target.closest('.nav-item')?.classList.add('active');
+    addLog('SYSTEM', 'Seite gewechselt: ' + name);
+}
+
+// ===== TEAM RENDERING =====
+function renderTeam(filter = 'all') {
+    const tbody = document.getElementById('team-tbody');
+    const filtered = filter === 'all' ? teamMembers : teamMembers.filter(m => m.type === filter);
+    tbody.innerHTML = filtered.map(m => `
+        <tr>
+            <td style="color: var(--text-dim);">${m.id}</td>
+            <td>
+                <div class="member-name">
+                    <div class="member-avatar" style="background: ${m.type === 'admin' ? 'rgba(59,130,246,0.15)' : m.type === 'core' ? 'rgba(168,85,247,0.15)' : m.type === 'model' ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)'}">
+                        ${m.icon}
+                    </div>
+                    <div class="info">
+                        <div class="name">${m.name}</div>
+                        <div class="role">${m.role}</div>
+                    </div>
+                </div>
+            </td>
+            <td style="font-size: 12px; color: var(--text-dim);">${m.role}</td>
+            <td style="font-size: 12px; color: var(--text-dim);">${m.conn}</td>
+            <td><span class="status-badge ${m.status}"><span class="dot"></span> ${m.status}</span></td>
+            <td style="font-size: 12px; color: var(--green); font-weight: 600;">${m.cost}</td>
+        </tr>
+    `).join('');
+}
+
+function filterTeam(type) {
+    renderTeam(type);
+}
+
+// ===== TASK BOARD =====
+function renderBoard(filter = 'all') {
+    const list = document.getElementById('task-list');
+    const filtered = filter === 'all' ? tasks : tasks.filter(t => t.status === filter);
+    list.innerHTML = filtered.map(t => `
+        <div class="task-item" onclick="toggleTaskStatus(${t.id})">
+            <div class="task-num">#${t.id}</div>
+            <div class="task-info">
+                <div class="title">${t.name}</div>
+                <div class="meta">${t.agent} · Phase ${t.phase} · ${t.priority}</div>
+            </div>
+            <span class="task-status ${t.status}">${t.status}</span>
+        </div>
+    `).join('');
+
+    updatePhaseProgress();
+}
+
+function toggleTaskStatus(id) {
+    const task = tasks.find(t => t.id === id);
+    const cycle = ['ready', 'progress', 'done', 'queued', 'pending'];
+    const idx = cycle.indexOf(task.status);
+    task.status = cycle[(idx + 1) % cycle.length];
+    renderBoard(currentBoardFilter);
+    addLog('BOARD', `Task #${task.id} Status → ${task.status}`);
+}
+
+function filterBoard(filter, el) {
+    currentBoardFilter = filter;
+    document.querySelectorAll('#page-board .tab').forEach(t => t.classList.remove('active'));
+    el?.classList.add('active');
+    renderBoard(filter);
+}
+
+let currentBoardFilter = 'all';
+
+function addTask() {
+    document.getElementById('task-modal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('task-modal').classList.remove('active');
+}
+
+function saveTask() {
+    const name = document.getElementById('task-name').value;
+    const agent = document.getElementById('task-agent').value;
+    const phase = parseInt(document.getElementById('task-phase').value);
+    const priority = document.getElementById('task-priority').value;
+
+    if (!name) return;
+
+    tasks.push({
+        id: tasks.length + 1,
+        name, agent, phase, priority,
+        status: 'ready'
+    });
+
+    closeModal();
+    renderBoard(currentBoardFilter);
+    addLog('BOARD', `Neuer Task erstellt: ${name}`);
+}
+
+function resetBoard() {
+    tasks.forEach(t => t.status = t.id <= 5 ? 'ready' : t.id <= 10 ? 'pending' : 'queued');
+    renderBoard('all');
+    addLog('BOARD', 'Board zurückgesetzt');
+}
+
+// ===== PHASE PROGRESS =====
+function updatePhaseProgress() {
+    const p1 = tasks.filter(t => t.phase === 1);
+    const p2 = tasks.filter(t => t.phase === 2);
+    const p3 = tasks.filter(t => t.phase === 3);
+
+    const pct = (arr) => {
+        if (arr.length === 0) return 0;
+        return Math.round(arr.filter(t => t.status === 'done').length / arr.length * 100);
+    };
+
+    document.getElementById('phase1-bar').style.width = pct(p1) + '%';
+    document.getElementById('phase1-pct').textContent = pct(p1) + '%';
+    document.getElementById('phase2-bar').style.width = pct(p2) + '%';
+    document.getElementById('phase2-pct').textContent = pct(p2) + '%';
+    document.getElementById('phase3-bar').style.width = pct(p3) + '%';
+    document.getElementById('phase3-pct').textContent = pct(p3) + '%';
+
+    const all = [...p1, ...p2, ...p3];
+    const total = Math.round(all.filter(t => t.status === 'done').length / all.length * 100);
+    document.getElementById('total-bar').style.width = total + '%';
+    document.getElementById('total-pct').textContent = total + '%';
+}
+
+// ===== MODELS =====
+function renderModels(filter = 'all') {
+    const grid = document.getElementById('model-grid');
+    const filtered = filter === 'all' ? models : models.filter(m => m.group === filter);
+    grid.innerHTML = filtered.map(m => `
+        <div class="model-card">
+            <div class="model-icon" style="background: ${m.group === 'ollama' ? 'rgba(34,197,94,0.1)' : m.group === 'opencode' ? 'rgba(234,179,8,0.1)' : 'rgba(59,130,246,0.1)'}">
+                ${m.icon}
+            </div>
+            <div class="model-info">
+                <div class="name">${m.name}</div>
+                <div class="meta">${m.provider} · ${m.size !== '—' ? m.size : 'API'} · ${m.verified ? '✅ VERIFIED' : '🟡 AVAILABLE'}</div>
+            </div>
+            <span class="status-badge ${m.verified ? 'active' : 'available'}"><span class="dot"></span> $0</span>
+        </div>
+    `).join('');
+}
+
+function filterModels(group, el) {
+    document.querySelectorAll('#page-models .tab').forEach(t => t.classList.remove('active'));
+    el?.classList.add('active');
+    renderModels(group);
+}
+
+// ===== REVENUE =====
+function renderRevenueChart() {
+    const chart = document.getElementById('revenue-chart');
+    const labels = document.getElementById('revenue-labels');
+    const days = 30;
+    chart.innerHTML = '';
+    labels.innerHTML = '';
+    for (let i = days; i >= 1; i--) {
+        const val = Math.floor(Math.random() * 30);
+        chart.innerHTML += `<div class="chart-bar" style="height: ${Math.max(val, 2)}%"><span class="tooltip">Tag -${i}: €${val}</span></div>`;
+        labels.innerHTML += `<span>${i % 5 === 0 ? '-' + i : ''}</span>`;
+    }
+}
+
+function simulateSale() {
+    const amount = (Math.random() * 200 + 20).toFixed(2);
+    revenueData.ecom += parseFloat(amount);
+    revenueData.transactions.unshift({
+        type: 'E-Commerce',
+        amount: '€' + amount,
+        time: new Date().toLocaleTimeString(),
+        status: 'success'
+    });
+    updateRevenueDisplay();
+    addLog('REVENUE', `Neuer Verkauf: €${amount}`);
+}
+
+function updateRevenueDisplay() {
+    document.getElementById('rev-ecommerce').textContent = '€' + revenueData.ecom.toFixed(2);
+    document.getElementById('rev-crypto').textContent = '€' + revenueData.crypto.toFixed(2);
+    document.getElementById('rev-ai').textContent = '€' + revenueData.ai.toFixed(2);
+    document.getElementById('rev-affiliate').textContent = '€' + revenueData.affiliate.toFixed(2);
+    document.getElementById('revenue-today').textContent = '€' + (revenueData.ecom + revenueData.crypto + revenueData.ai + revenueData.affiliate).toFixed(2);
+    document.getElementById('revenue-month').textContent = '€' + (revenueData.ecom + revenueData.crypto + revenueData.ai + revenueData.affiliate).toFixed(2);
+
+    const list = document.getElementById('transactions-list');
+    if (revenueData.transactions.length > 0) {
+        list.innerHTML = revenueData.transactions.slice(0, 20).map(t => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+                <div>
+                    <div style="font-size: 13px; font-weight: 500;">${t.type}</div>
+                    <div style="font-size: 11px; color: var(--text-dim);">${t.time}</div>
+                </div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--green);">${t.amount}</div>
+            </div>
+        `).join('');
+    }
+}
+
+// ===== LOGGING =====
+function addLog(agent, msg, type = '') {
+    const time = new Date().toLocaleTimeString();
+    logs.unshift({ time, agent, msg, type });
+    renderLogs();
+}
+
+function renderLogs() {
+    const overviewLog = document.getElementById('overview-log');
+    const fullLog = document.getElementById('full-log');
+    const html = logs.slice(0, 15).map(l => `
+        <div class="log-line ${l.type}">
+            <span class="log-time">${l.time}</span>
+            <span class="log-agent">[${l.agent}]</span>
+            <span class="log-msg">${l.msg}</span>
+        </div>
+    `).join('');
+    const fullHtml = logs.map(l => `
+        <div class="log-line ${l.type}">
+            <span class="log-time">${l.time}</span>
+            <span class="log-agent">[${l.agent}]</span>
+            <span class="log-msg">${l.msg}</span>
+        </div>
+    `).join('');
+    if (overviewLog) overviewLog.innerHTML = html;
+    if (fullLog) fullLog.innerHTML = fullHtml;
+}
+
+function clearLogs() {
+    logs = [];
+    renderLogs();
+    addLog('SYSTEM', 'Logs gelöscht');
+}
+
+function exportLogs() {
+    const text = logs.map(l => `${l.time} [${l.agent}] ${l.msg}`).join('\n');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ai-business-logs.txt';
+    a.click();
+}
+
+function refreshData() {
+    addLog('SYSTEM', 'Daten werden aktualisiert...');
+    renderBoard(currentBoardFilter);
+    renderTeam();
+    renderModels();
+    updateRevenueDisplay();
+    addLog('SYSTEM', 'Alle Daten aktualisiert', 'success');
+}
+
+// ===== INIT =====
+addLog('SYSTEM', 'AI Business Admin Dashboard geladen');
+addLog('SYSTEM', '37 Team-Mitglieder bereit');
+addLog('SYSTEM', '28 Free AI Models aktiv ($0 Kosten)');
+addLog('SYSTEM', '14 Tasks auf Construction Site Board');
+addLog('WINDOWS USE', 'Admin Lead — Bereit für Server-Setup');
+addLog('OPENCODE', 'Master Orchestrator — Bereit');
+addLog('CLAUDE CODE', 'Senior Architect — Bereit');
+
+renderTeam();
+renderBoard();
+renderModels();
+renderRevenueChart();
+updateRevenueDisplay();
+</script>
+</body>
+</html>
