@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI CITY · realtime</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#04060c;font-family:'Segoe UI',sans-serif}
+  canvas{display:block;width:100%;height:100%}
+  #cmd{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;
+    background:rgba(8,12,22,.88);border:1px solid rgba(90,140,255,.35);border-radius:14px;padding:8px 12px;
+    box-shadow:0 8px 30px rgba(0,0,0,.6);z-index:5}
+  #cmd input{background:transparent;border:none;outline:none;color:#d7e6ff;font-size:14px;width:340px}
+  #cmd input::placeholder{color:#5b6c8c}
+  #cmd button{background:linear-gradient(180deg,#1d4ed8,#12318f);border:1px solid #3b6ef0;color:#eaf2ff;border-radius:9px;
+    padding:7px 14px;font-size:13px;cursor:pointer}
+  #cmd button:hover{filter:brightness(1.2)}
+  #cmd .hint{color:#56698c;font-size:11px;padding-left:6px;border-left:1px solid #2a3752}
+  #live{position:fixed;top:0;right:0;padding:10px 14px;color:#8fd6ff;font:600 12px 'Segoe UI';letter-spacing:1px;
+    background:rgba(6,10,18,.7);border-bottom-left-radius:14px;border:1px solid rgba(80,140,255,.25);border-top:none;border-right:none;z-index:5}
+  #live b{color:#5ee0ff}
+  #err{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#ff8f8f;font-size:14px;
+    background:#200a0a;border:1px solid #ff5555;padding:14px 20px;border-radius:12px;display:none;z-index:6;max-width:70%;text-align:center}
+</style>
+</head>
+<body>
+<div id="live">◉ <b id="lc">–</b> Agenten live</div>
+<div id="err"></div>
+<canvas id="cv"></canvas>
+<div id="cmd">
+  <input id="in" placeholder="Auftrag an das AI-Team – z.B. &quot;Implementiere eine API-Route...&quot;" autocomplete="off">
+  <button id="send">⇧ Agent starten</button>
+  <span class="hint">Scroll=Zoom · Drag=Pan</span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0;
+  function size(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  window.addEventListener('resize', size); size();
+
+  /* ---------- Kamera ---------- */
+  var cam = { x: 0, y: 0, z: 1 };
+  var drag = null;
+
+  /* ---------- Weltmodell ---------- */
+  var state = { buildings: [], dists: [], agents: [], byFile: {} };
+  var ufos = {};          // runId -> ufo entity
+  var events = [];        // live feed
+  var distLayout = [];    // {name, x, y, w, h, color, blds:[...]}
+  var GRID = 1200;        // Weltfläche pro Stadtteil
+
+  var PALETTE = ['#ffd75e','#5ee0ff','#5effa8','#c06bff','#ff8a5e','#ff5e9c','#6b8bff','#ffd75e'];
+  function distColor(name){
+    var h = 0; for (var i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    return PALETTE[(name==='.'?0:h) % PALETTE.length];
+  }
+
+  /* ---------- Layout der Stadt ---------- */
+  function layoutBuildings(){
+    var d = {}, order = [];
+    state.buildings.forEach(function(b){
+      if (!d[b.dist]) { d[b.dist] = []; order.push(b.dist); }
+      d[b.dist].push(b);
+    });
+    distLayout = [];
+    var COLS = 4, ROW = 3, DPL = COLS * ROW;
+    var n = order.length;
+    for (var di=0; di<n; di++){
+      var cx = (di % COLS) * 2 * GRID * 0.85;
+      var cy = Math.floor(di / COLS) * 2 * GRID * 0.85;
+      var cols = 6;      // Gebäude pro Reihe im Distrikt
+      var blds = d[order[di]];
+      var placed = [];
+      blds.forEach(function(b,i){
+        var gx = Math.floor(i % cols), gy = Math.floor(i / cols);
+        var bw = (GRID/3.2) - 14, bh = (GRID/4.2) - 14;
+        var top = b.w / 1600 + 0.55;
+        placed.push({ b: b, x: cx + gx*(bw+14) + 40, y: cy + gy*(bh+14) + 40, w: bw, h: bh, top: Math.max(1.1, Math.min(14, top)), color: distColor(b.dist) });
+        state.byFile[b.rel] = placed[placed.length-1];
+      });
+      distLayout.push({ name: order[di], blds: placed, color: distColor(order[di]),
+        x: cx - 40, y: cy - 40, w: (cols-1)*(GRID/3.2) + 80, h: Math.max(160, (Math.ceil(blds.length/cols)-1)*(GRID/4.2)+80) });
+    }
+  }
+
+  /* ---------- Facade: ist schon ein Gebäude geladen ---------- */
+  var smoke = { x: 0, y: 0, s: 0 };
+
+  /* ---------- SSE + fetch ---------- */
+  function showErr(m){ var e=document.getElementById('err'); e.style.display='block'; e.textContent=m; }
+
+  function connect(){
+    fetch('/api/state').then(function(r){ return r.json(); }).then(function(s){
+      state.buildings = s.buildings; state.dists = s.dists; state.agents = s.agents;
+      layoutBuildings();
+      s.agents.forEach(function(a){ if (a.state!=='done') ensureUfo(a); });
+      document.getElementById('lc').textContent = s.dists.length;
+    }).catch(function(e){ showErr('Server nicht erreichbar – starte `node city/server.js` (Port 4777).'); });
+
+    var es = new EventSource('/api/events');
+    es.onerror = function(){ /* reconnect-busy */ };
+    es.onmessage = function(m){
+      var ev; try { ev = JSON.parse(m.data); } catch (e) { return; }
+      handle(ev);
+    };
+  }
+
+  function handle(ev){
+    if (ev.agent) { ensureUfo(ev.agent); var u = ufos[ev.agent.run]; if (u) applyAgentState(u, ev.agent); }
+    if (ev.msg) push('⚠ ' + ev.msg);
+    if (ev.type === 'dispatch_start') { push('⇧ Agent «' + ev.agent + '» gestartet: ' + ev.prompt.slice(0,64) + (ev.prompt.length>64?'…':'')); }
+  }
+
+  function push(txt){
+    events.unshift({ t: Date.now(), txt: txt, color: txt.indexOf('⚠')===0 ? '#ff9d9d' : '#bcd6ff' });
+    if (events.length > 14) events.pop();
+  }
+
+  /* ---------- UFO-Agenten ---------- */
+  function ensureUfo(a){
+    if (ufos[a.run]) return;
+    var u = { run: a.run, x: Math.random()*GRID*8, y: Math.random()*GRID*6, vx: (Math.random()*2-1)*90, vy: (Math.random()*2-1)*90,
+      model: a.model, provider: a.provider, steps: a.steps||0, tools: a.tools||0, file: a.file, state: a.state||'idle',
+      since: a.since, bob: Math.random()*10, tgt: null, hue: (a.model||'').length*37 % 360 };
+    ufos[a.run] = u;
+  }
+  function applyAgentState(u, a){
+    if (a.model && a.model !== '?') u.model = a.model;
+    u.provider = a.provider; u.steps = a.steps||u.steps; u.tools = a.tools||u.tools; u.state = a.state||u.state;
+    if (a.file){ u.file = a.file; var f = state.byFile[a.file]; if (f){ u.tgt = f; } }
+    u.lastSeen = Date.now();
+  }
+
+  /* ---------- Rendering ---------- */
+  function worldToScreen(wx, wy){ return { x: (wx - cam.x) * cam.z + W/2, y: (wy - cam.y) * cam.z + H/2 }; }
+  function screenToWorld(sx, sy){ return { x: (sx - W/2)/cam.z + cam.x, y: (sy - H/2)/cam.z + cam.y }; }
+
+  var nowT = 0;
+  function draw(){
+    ctx.fillStyle = '#04060c';
+    ctx.fillRect(0,0,W,H);
+
+    /* Sterne */
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    for (var i=0;i<90;i++){ var sx=(i*137.5)%W, sy=(i*71.3)%H; ctx.globalAlpha=.4; ctx.fillRect(sx,sy,2,2); }
+    ctx.globalAlpha = 1;
+
+    ctx.save();
+    ctx.translate(W/2, H/2); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
+
+    /* Grundplatnen + Straßen */
+    distLayout.forEach(function(d){
+      ctx.fillStyle = '#0b101c';
+      ctx.fillRect(d.x-18, d.y-18, d.w+36, d.h+36);
+      ctx.strokeStyle = 'rgba(80,140,255,.16)';
+      ctx.strokeRect(d.x-18, d.y-18, d.w+36, d.h+36);
+    });
+    /* Stadtnamen */
+    distLayout.forEach(function(d){
+      ctx.fillStyle = d.color; ctx.globalAlpha = .9;
+      ctx.font = '600 ' + (13) + 'px Segoe UI';
+      ctx.fillText('▪ ' + (d.name==='.' ? 'ROOT' : d.name.toUpperCase()), d.x-16, d.y-24);
+      ctx.globalAlpha = 1;
+    });
+
+    /* Gebäude */
+    distLayout.forEach(function(d){
+      d.blds.forEach(function(g){
+        var pulse = 0;
+        if (g.pulse && nowT - g.pulse < 1400) pulse = 1 - (nowT - g.pulse)/1400;
+        ctx.fillStyle = '#151c2e';
+        ctx.fillRect(g.x, g.y, g.w, g.h);
+        var grd = ctx.createLinearGradient(g.x, g.y, g.x, g.y+g.h);
+        var base = g.color;
+        grd.addColorStop(0, base);
+        grd.addColorStop(1, '#0d1526');
+        ctx.fillStyle = grd;
+        ctx.globalAlpha = .82 + pulse*.18;
+        ctx.fillRect(g.x+3, g.y+3, g.w-6, g.h-6);
+        ctx.globalAlpha = 1;
+        /* Fenster */
+        ctx.fillStyle = 'rgba(180,215,255,.5)';
+        var cxn = Math.floor(g.w/34), cyn = Math.floor(g.h/26);
+        for (var cx=0;cx<cxn;cx++) for (var cy=0;cy<cyn;cy++){
+          if (((cx*7 + cy*3 + (g.b.rel.length||1)) % 5) === 0) ctx.fillRect(g.x+12+cx*34, g.y+12+cy*26, 8, 8);
+        }
+        if (g.pulse && pulse > .35){ ctx.strokeStyle = '#ffffff'; ctx.globalAlpha = pulse; ctx.lineWidth = 3; ctx.strokeRect(g.x-4, g.y-4, g.w+8, g.h+8); ctx.globalAlpha = 1; }
+      });
+    });
+
+    /* UFOs */
+    var keys = Object.keys(ufos);
+    keys.forEach(function(k){
+      var u = ufos[k];
+      if (Date.now() - u.lastSeen > 40000 && u.state!=='done') u.state = 'idle';
+      if (u.tgt){
+        var tx = u.tgt.x + u.tgt.w/2, ty = u.tgt.y + u.tgt.h/2;
+        var dx = tx - u.x, dy = ty - u.y, dd = Math.sqrt(dx*dx+dy*dy);
+        if (dd > 12){ u.vx = dx/dd * 110; u.vy = dy/dd * 110; }
+        else { u.vx = (Math.random()*2-1)*40; u.vy = (Math.random()*2-1)*40; }
+      } else {
+        if (Math.random() < .01){ u.vx = (Math.random()*2-1)*120; u.vy = (Math.random()*2-1)*120; }
+      }
+      u.x += u.vx * (1/60); u.y += u.vy * (1/60);
+      u.bob += 0.06;
+
+      /* Schatten */
+      ctx.fillStyle = 'rgba(0,0,0,.45)';
+      ctx.beginPath(); ctx.ellipse(u.x, u.y+26, 26, 8, 0, 0, Math.PI*2); ctx.fill();
+
+      var bobY = Math.sin(u.bob) * 5;
+      var by = u.y + bobY;
+      /* Lichtkegel */
+      if (u.tgt && u.state === 'working'){
+        ctx.save(); ctx.globalAlpha = .12; var g2 = ctx.createLinearGradient(u.x, by, u.x, u.tgt.y+u.tgt.h);
+        g2.addColorStop(0, '#ffd75e'); g2.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g2;
+        ctx.beginPath(); ctx.moveTo(u.x-10, by); ctx.lineTo(u.x+10, by); ctx.lineTo(u.x+u.tgt.w, u.tgt.y+u.tgt.h); ctx.lineTo(u.x-u.tgt.w, u.tgt.y+u.tgt.h); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+      /* UFO-Body */
+      ctx.fillStyle = 'hsla(' + u.hue + ',80%,60%,.85)';
+      ctx.beginPath(); ctx.ellipse(u.x, by+4, 24, 8, 0, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(u.x, by-2, 14, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = 'hsla(' + u.hue + ',90%,72%,.95)';
+      ctx.beginPath(); ctx.arc(u.x, by+1, 5, 0, Math.PI*2); ctx.fill();
+
+      /* Status-Text */
+      var werk = '';
+      if (u.state==='working' && u.file) werk = u.file.split('/').pop();
+      ctx.font = '11px Segoe UI';
+      ctx.fillStyle = u.tgt ? '#ffe9a8' : '#cfe0ff';
+      var label = (u.model && u.model!=='?' ? u.model : 'agent') + (werk? ' · ' + werk : '');
+      var tw = ctx.measureText(label).width;
+      ctx.fillStyle = '#12203a';
+      ctx.globalAlpha = .8;
+      ctx.fillRect(u.x-tw/2-6, by-42, tw+12, 16);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#e4f0ff';
+      ctx.fillText(label, u.x-tw/2, by-30);
+    });
+
+    ctx.restore();
+
+    /* Live-Feed rechts unten */
+    ctx.font = '12px Consolas, monospace';
+    var fy = H - events.length * 18 - 70;
+    events.forEach(function(e){
+      var age = (Date.now() - e.t)/1000;
+      ctx.globalAlpha = age < 3 ? 1 : Math.max(.25, 1 - (age-3)/18);
+      ctx.fillStyle = e.color;
+      ctx.fillText(e.txt.length>92 ? e.txt.slice(0,90)+'…' : e.txt, 18, fy);
+      fy += 18;
+    });
+    ctx.globalAlpha = 1;
+
+    if (state.agents.length === 0 && keys.length === 0){
+      ctx.fillStyle = '#66718a'; ctx.font = '13px Segoe UI'; ctx.fillText('Noch keine Agenten – tipp unten einen Auftrag und starte das Team.', 18, H-120);
+    }
+  }
+
+  function loop(tt){ nowT = tt || performance.now(); draw(); requestAnimationFrame(loop); }
+
+  /* ---------- Eingabe ---------- */
+  cv.addEventListener('pointerdown', function(e){
+    drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y };
+  });
+  window.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    cam.x = drag.cx - dx/cam.z; cam.y = drag.cy - dy/cam.z;
+  });
+  window.addEventListener('pointerup', function(){ drag = null; });
+  cv.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var f = e.deltaY < 0 ? 1.12 : .89;
+    var p = screenToWorld(e.clientX, e.clientY);
+    cam.z = Math.max(.25, Math.min(4, cam.z * f));
+    cam.x = p.x - (e.clientX - W/2)/cam.z;
+    cam.y = p.y - (e.clientY - H/2)/cam.z;
+  }, { passive: false });
+
+  cv.addEventListener('click', function(e){
+    var p = screenToWorld(e.clientX, e.clientY);
+    var best = null, bd = 1e9;
+    Object.keys(ufos).forEach(function(k){
+      var u = ufos[k], bobY = Math.sin(u.bob)*5;
+      var d = Math.hypot(p.x-u.x, p.y-(u.y+bobY-6));
+      if (d < 60 && d < bd){ bd = d; best = u; }
+    });
+    if (best){
+      push((best.model||'agent') + ' · Steps ' + (best.steps||0) + ' · Tools ' + (best.tools||0) + (best.file ? ' · arbeitet an ' + best.file : ''));
+      return;
+    }
+    distLayout.forEach(function(d){
+      d.blds.forEach(function(g){
+        if (p.x>=g.x && p.x<=g.x+g.w && p.y>=g.y && p.y<=g.y+g.h){
+          g.pulse = nowT;
+          push('🏢 ' + g.b.rel + ' · ' + Math.round(g.b.size/1024*10)/10 + ' kB');
+        }
+      });
+    });
+  });
+
+  /* ---------- Dispatch ---------- */
+  function send(){
+    var v = document.getElementById('in').value.trim();
+    if (!v) return;
+    fetch('/api/dispatch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: v, agent: 'default' }) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (j.ok) push('⇧ Gesendet ✔'); else push('⚠ ' + (j.err||'fehler')); })
+      .catch(function(){ push('⚠ Server nicht erreichbar'); });
+  }
+  document.getElementById('send').addEventListener('click', send);
+  document.getElementById('in').addEventListener('keydown', function(e){ if (e.key==='Enter') send(); });
+
+  /* ---------- Start ---------- */
+  connect();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
