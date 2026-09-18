@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI CITY 2250 — Rapperswil-Jona · Das stärkste KI-Team der Welt</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05050d;color:#c8f0ff;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh}
+#hud{position:fixed;top:0;left:0;right:0;height:56px;z-index:50;display:flex;align-items:center;padding:0 16px;gap:20px;background:rgba(5,5,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,255,255,.2)}
+#hud .logo{font-weight:800;font-size:18px;background:linear-gradient(90deg,#00ffd5,#00a2ff,#bf00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;white-space:nowrap}
+#hud .stat{display:flex;flex-direction:column;font-size:10px;color:#5f9fb3;white-space:nowrap}
+#hud .stat b{font-size:14px;color:#fff}
+#hud .stat b.gold{color:#ffd700}
+#hud .stat b.green{color:#00ff88}
+#hud .right{margin-left:auto;display:flex;gap:16px;align-items:center}
+#hud .online{display:flex;align-items:center;gap:6px;font-size:11px;color:#00ff88}
+#hud .online .dot{width:8px;height:8px;border-radius:50%;background:#00ff88;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#city{position:fixed;top:56px;left:0;right:0;bottom:0;width:100%;height:calc(100vh - 56px)}
+#side{position:fixed;top:56px;right:0;bottom:0;width:380px;background:rgba(5,5,20,.92);backdrop-filter:blur(10px);border-left:1px solid rgba(0,255,255,.15);z-index:40;overflow:hidden;display:flex;flex-direction:column}
+#side .tabs{display:flex;border-bottom:1px solid rgba(0,255,255,.15)}
+#side .tab{flex:1;text-align:center;padding:10px;font-size:11px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;color:#5f9fb3}
+#side .tab.active{color:#00ffd5;border-bottom:2px solid #00ffd5;background:rgba(0,255,213,.06)}
+#side .content{flex:1;overflow-y:auto;padding:10px}
+#side .content::-webkit-scrollbar{width:5px}
+#side .content::-webkit-scrollbar-thumb{background:#1a4a5a;border-radius:3px}
+.org-team{margin-bottom:14px}
+.org-div{border:1px solid rgba(0,200,255,.25);border-radius:10px;overflow:hidden;margin-bottom:10px;background:rgba(0,20,40,.35)}
+.org-div .div-h{display:flex;gap:8px;padding:8px 12px;align-items:center;background:rgba(0,120,255,.12);cursor:pointer}
+.org-div .div-h b{font-size:12px;flex:1;color:#bfefff}
+.org-div .div-h .count{font-size:10px;color:#fff;background:#1a8cff;padding:2px 8px;border-radius:10px}
+.org-div .members{display:none;padding:4px 12px 10px}
+.org-div.open .members{display:block}
+.member{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px;border-bottom:1px solid rgba(0,255,255,.06)}
+.member .micon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;background:rgba(0,200,255,.1);flex-shrink:0}
+.member .mname{flex:1;color:#d0f0ff}
+.member .mrole{font-size:9px;color:#5f9fb3;width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member .mlvl{font-size:9px;color:#ffd700;width:34px;text-align:right}
+.member.working{background:rgba(0,255,136,.07)}
+.member.chatting{background:rgba(255,0,255,.08)}
+.member .mstatus{width:6px;height:6px;border-radius:50%;background:#0aa}
+.logline{font-size:10px;font-family:Consolas,monospace;padding:3px 0;border-bottom:1px solid rgba(0,255,255,.04);line-height:1.4}
+.logline .t{color:#4a7a8a}
+.logline .a{color:#00ffd5}
+.logline .m{color:#c8f0ff}
+.logline.err{color:#ff6b6b}
+.logline .a.blue{color:#5aaaff}
+.logline .a.gold{color:#ffd700}
+.logline .a.green{color:#00ff88}
+.logline .a.purple{color:#c77dff}
+.logline .a.pink{color:#ff6bd6}
+.logline .a.red{color:#ff7a5a}
+.legend{position:fixed;left:12px;bottom:12px;z-index:45;font-size:9px;color:#5f9fb3;background:rgba(5,5,20,.7);padding:8px 10px;border-radius:8px;border:1px solid rgba(0,255,213,.2);max-width:240px;line-height:1.6}
+.legend b{color:#fff}
+.panel-small{position:fixed;left:12px;top:70px;z-index:45;background:rgba(5,5,20,.7);border:1px solid rgba(0,255,213,.2);border-radius:10px;padding:12px;font-size:11px;width:200px}
+.panel-small h4{color:#00ffd5;font-size:11px;margin-bottom:8px;letter-spacing:1px}
+.panel-small .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(0,255,255,.06)}
+.panel-small .row span{color:#7fc0d5}
+.panel-small .row b{color:#fff}
+@media(max-width:900px){#side{display:none}.panel-small{display:none}}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div class="logo">◢ AI CITY 2250</div>
+  <div class="stat">JAHR <b>2250</b></div>
+  <div class="stat">BÜRGER <b id="hud-cit">0</b></div>
+  <div class="stat">GESAMTERLÖS <b class="gold" id="hud-gold">◈ 0</b></div>
+  <div class="stat">AI-KOSTEN <b class="green">$0</b></div>
+  <div class="right">
+    <div class="online"><span class="dot"></span> NETZ AKTIV</div>
+    <div class="stat">UHR <b id="hud-clock">00:00</b></div>
+  </div>
+</div>
+
+<div class="panel-small">
+  <h4>◈ CITY WIRTSCHAFT</h4>
+  <div class="row"><span>Tageserlös</span><b id="p-day">0</b></div>
+  <div class="row"><span>Gebäude</span><b id="p-build">0</b></div>
+  <div class="row"><span>Investiert</span><b id="p-inv">0</b></div>
+  <div class="row"><span>Neue Projekte</span><b id="p-proj">0</b></div>
+  <div class="row"><span>Team-Level</span><b id="p-lvl">1</b></div>
+</div>
+
+<div class="legend">
+  <b>Rappel-Jona 2250</b><br>
+  🏰 Schloss-Altstadt · 🚉 Bahnhof · 🌉 Holzbrücke Hurden<br>
+  💠 AI-Distrikte · 🏢 Smart-Towers · 🏭 Fabrication-Hubs<br>
+  🟢 8 Teams · 👑 CEO Tower · Alle klicken = Zoom<br>
+  <b>Maus-Anklick</b> auf Bürger = Details
+</div>
+
+<canvas id="city"></canvas>
+
+<div id="side">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'tab-team')">ORGANIGRAMM</div>
+    <div class="tab" onclick="switchTab(this,'tab-log')">KOM. NETZ</div>
+  </div>
+  <div class="content">
+    <div id="tab-team"></div>
+    <div id="tab-log" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============ CITY 2250 — SERVICES ============ */
+const cv=document.getElementById('city'),cx=cv.getContext('2d');
+let W=cv.width=window.innerWidth-380, H=cv.height=window.innerHeight-56;
+window.addEventListener('resize',()=>{W=cv.width=window.innerWidth-380;H=cv.height=window.innerHeight-56;});
+
+/* YEAR 2250 TIME */
+const startYear=2250,timeFactor=1200;
+let gameMin=0, gameDay=0;
+const clock=document.getElementById('hud-clock');
+setInterval(()=>{gameMin+=4;if(gameMin>=1440){gameMin=0;gameDay++;}
+  const h=Math.floor(gameMin/60),m=gameMin%60;
+  clock.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+},1000);
+
+/* ============ RAPPERSWIL-JONA WORLD ============ */
+/* Grid 120x90. Lake Obersee south (rows 60-90). Altstadt peninsula NE with castle hill. */
+const GX=W/120,GY=H/90;
+function cx1(x){return x*GX;} function cy1(y){return y*GY;}
+
+/* WATER (Lake Obersee + Zürichsee) — south half with bay shape */
+function isWater(x,y){
+  if(y>=64)return true;
+  if(x>=72&&y>=38&&x<92&&y<72)return false; // peninsula Rapperswil
+  if(x>=88&&y>=40&&x<104&&y<72)return false; // Hurden causeway
+  return false;
+}
+
+/* Streets — real Rapperswil-Jona arteries */
+const streets=[
+  {name:"Neue Jonastrasse",pts:[[2,30],[10,32],[20,34],[32,36],[44,38],[56,40],[66,42],[74,44],[80,46]],w:4},
+  {name:"Kreuzstrasse",pts:[[10,6],[10,15],[10,24],[10,30]],w:3},
+  {name:"Seeuferpromenade",pts:[[60,64],[64,63],[68,62],[72,60],[76,58],[80,56]],w:3},
+  {name:"Seestrasse",pts:[[60,60],[64,58],[68,56],[72,54],[76,52],[80,50]],w:3},
+  {name:"Altstadtgasse",pts:[[72,40],[74,42],[76,44],[78,46],[80,48]],w:2},
+  {name:"Schlosstreppe",pts:[[76,40],[78,38],[80,36],[82,34],[84,32]],w:2},
+  {name:"Jonastrasse",pts:[[30,26],[36,28],[42,32],[48,36],[54,40],[60,42]],w:3},
+  {name:"A53 Autobahn",pts:[[0,12],[14,14],[26,18],[40,24],[54,30]],w:5},
+  {name:"Bahnhofstrasse",pts:[[58,44],[64,46],[70,48],[74,50]],w:3},
+  {name:"Rosenallee",pts:[[66,40],[70,44],[74,48]],w:2},
+  {name:"Lenggisstrasse",pts:[[20,40],[26,44],[32,48],[38,52]],w:2},
+  {name:"Bollingerstrasse",pts:[[96,52],[100,56],[104,60],[110,64]],w:3},
+  {name:"Zürcherstrasse",pts:[[0,20],[8,22],[16,26],[24,30]],w:3},
+  {name:"Holzbrücke Hurden",pts:[[92,56],[98,60],[104,63],[112,66]],w:2}
+];
+
+/* Districts = Zones */
+const districts=[
+  {name:"Altstadt & Schloss",x:72,y:38,w:20,h:10,color:'#ffd700',icon:'🏰'},
+  {name:"Bahnhofsviertel",x:56,y:40,w:10,h:8,color:'#5aaaff',icon:'🚉'},
+  {name:"Hauptplatz",x:80,y:44,w:6,h:6,color:'#ff9d5c',icon:'⛲'},
+  {name:"Kempraten",x:2,y:26,w:12,h:10,color:'#7aaaff',icon:'🏘️'},
+  {name:"Jona Zentrum",x:30,y:30,w:16,h:10,color:'#ff6bd6',icon:'🏬'},
+  {name:"Lenggis",x:18,y:42,w:14,h:8,color:'#00ff88',icon:'🌳'},
+  {name:"Lido & Zoo",x:62,y:54,w:10,h:8,color:'#00ffd5',icon:'🦁'},
+  {name:"Hurden Damm",x:88,y:40,w:16,h:8,color:'#7a5aff',icon:'🌉'},
+  {name:"Bollingen",x:96,y:56,w:14,h:10,color:'#ff7a5a',icon:'🏡'},
+  {name:"AI Tech-Distrikt",x:40,y:20,w:16,h:8,color:'#00a2ff',icon:'🏢'},
+  {name:"Fabrik-Hub",x:8,y:36,w:12,h:8,color:'#c77dff',icon:'🏭'}
+];
+
+/* ============ FULL TEAM — ALLE DIVISIONEN ============ */
+const ORG=[
+ {d:"👑 EXECUTIVE BOARD",c:'#ffd700',m:[
+   {n:"CEO · Quantum-Architekt",r:"CEO",i:"👑",t:'admin'}, {n:"CTO · Tech-Imperator",r:"CTO",i:"🔬",t:'admin'},
+   {n:"CIO · Informations-Strateg",r:"CIO",i:"💡",t:'admin'}, {n:"COO · Operations-Meister",r:"COO",i:"⚙️",t:'admin'},
+   {n:"CFO · Kapital-Stratege",r:"CFO",i:"💰",t:'admin'}, {n:"CMO · Markt-Genie",r:"CMO",i:"📣",t:'admin'},
+   {n:"CPO · Produkt-Visionär",r:"CPO",i:"📦",t:'admin'}, {n:"CSO · Imperiums-Wächter",r:"CSO",i:"🛡️",t:'admin'},
+   {n:"Chief AI Officer · KI-Orakel",r:"CAIO",i:"🧠",t:'admin'}, {n:"Chief Innovation Officer",r:"CIO2",i:"🚀",t:'admin'}]},
+ {d:"🧠 AI DIVISION",c:'#00ff88',m:[
+   {n:"Big-Pickle",r:"Master AI",i:"🤖",t:'model'}, {n:"Hy3",r:"Coding AI",i:"💻",t:'model'},
+   {n:"MiMo-V2.5",r:"Architect AI",i:"🏗️",t:'model'}, {n:"Muse-Spark",r:"Kreativ-AI",i:"🎨",t:'model'},
+   {n:"Nemotron-Ultra",r:"Reasoning AI",i:"🧮",t:'model'}, {n:"qwen3-4b",r:"Lokal-Brain",i:"⚡",t:'model'},
+   {n:"llama3.2",r:"Universal-AI",i:"🦙",t:'model'}, {n:"qwen3-8b",r:"Deep-Reasoner",i:"🧠",t:'model'}]},
+ {d:"💻 SOFTWARE DIVISION",c:'#00a2ff',m:[
+   {n:"OpenCode",r:"Master Orchestrator",i:"👑",t:'admin'}, {n:"Claude Code",r:"Senior Architect",i:"🧠",t:'core'},
+   {n:"Backend-Engineer",r:"API/Kernel",i:"🔧",t:'core'}, {n:"Frontend-Engineer",r:"UI-Layer",i:"🖥️",t:'core'},
+   {n:"DevOps-Pilot",r:"Pipeline/Deploy",i:"🚢",t:'core'}, {n:"Security-Guardian",r:"Zero-Trust",i:"🔐",t:'core'},
+   {n:"Cloud-Architect",r:"Scaling",i:"☁️",t:'core'}, {n:"DB-Keeper",r:"Data-Core",i:"🗄️",t:'core'}]},
+ {d:"🛍️ SHOPIFY DIVISION",c:'#7be495',m:[
+   {n:"Store-Magier",r:"Theme/Liquid",i:"🛒",t:'core'}, {n:"CRO-Optimierer",r:"Conversion",i:"📈",t:'core'},
+   {n:"Product-Curator",r:"Listing/SEO",i:"📦",t:'core'}, {n:"Checkout-Meister",r:"Kasse",i:"💳",t:'core'},
+   {n:"App-Tinkerer",r:"Apps/APIs",i:"🧩",t:'core'}]},
+ {d:"🎨 DESIGN DIVISION",c:'#ff6bd6',m:[
+   {n:"DesignArena",r:"Creative Director",i:"🎨",t:'core'}, {n:"UI-Architekt",r:"Interface",i:"🖌️",t:'core'},
+   {n:"Brand-Wächter",r:"Identity",i:"⭐",t:'core'}, {n:"Motion-Maestro",r:"Animation",i:"✨",t:'core'},
+   {n:"Hologramm-Künstler",r:"Holos",i:"📽️",t:'core'}]},
+ {d:"📣 MARKETING DIVISION",c:'#ff7a5a',m:[
+   {n:"SEO-Patriarch",r:"Ranking",i:"🔍",t:'core'}, {n:"Ads-Zar",r:"Kampagnen",i:"🎯",t:'core'},
+   {n:"Social-Kaiser",r:"Community",i:"📱",t:'core'}, {n:"Email-Stratege",r:"Sequenzen",i:"✉️",t:'core'},
+   {n:"Copy-Genie",r:"Copywriting",i:"✍️",t:'core'}, {n:"Arena AI",r:"Research",i:"🔬",t:'core'}]},
+ {d:"⚡ AUTOMATION DIVISION",c:'#ffd700',m:[
+   {n:"Workflow-Zauberer",r:"Automation",i:"⚡",t:'core'}, {n:"API-Botschafter",r:"Integration",i:"🔗",t:'core'},
+   {n:"Windows Use",r:"System-Admin",i:"🪟",t:'admin'}, {n:"Script-Samurai",r:"PowerShell",i:"📜",t:'core'},
+   {n:"Orchestrierer-Elite",r:"Agents-Coordination",i:"🎼",t:'core'}]},
+ {d:"💼 BUSINESS DIVISION",c:'#c77dff',m:[
+   {n:"Sales-Ikone",r:"B2B/Verkauf",i:"🤝",t:'core'}, {n:"Finanz-Director",r:"Profit-Tracking",i:"📊",t:'core'},
+   {n:"Legal-Executor",r:"DSGVO/Compliance",i:"⚖️",t:'core'}, {n:"CRM-Ops",r:"Pipeline",i:"📇",t:'core'},
+   {n:"Skalierungs-Pilot",r:"Growth",i:"🚀",t:'core'}]},
+ {d:"🔬 RESEARCH DIVISION",c:'#5aaaff',m:[
+   {n:"Trend-Oracle",r:"Future-Scan",i:"🔮",t:'core'}, {n:"Daten-Wissenschaftler",r:"Analytics",i:"📈",t:'core'},
+   {n:"Wettbewerbs-Analytiker",r:"Markt",i:"⚔️",t:'core'}, {n:"Innovations-Scout",r:"R&D",i:"🧪",t:'core'}]}
+];
+
+let citizens=[];
+ORG.forEach((d,di)=>d.m.forEach((m)=>{
+  citizens.push({id:citizens.length+1,team:di,teamName:d.d,name:m.n,role:m.r,icon:m.i,t:m.t,
+    level:1,xp:0,revenue:0,projects:0,builds:0,
+    x:Math.random()*108+4,y:Math.random()*50+6,
+    tx:Math.random()*108+4,ty:Math.random()*50+6,
+    state:'work',timer:0,chat:"",chatColor:'#fff'
+  });
+}));
+
+const teamColors=['#ffd700','#00ff88','#00a2ff','#7be495','#ff6bd6','#ff7a5a','#5aaaff','#c77dff','#5aaaff'];
+const totalCitizens=citizens.length;
+document.getElementById('hud-cit').textContent=totalCitizens;
+
+/* buildings */
+let buildings=[];
+(function genBuildings(){
+  // Altstadt (castle area)
+  for(let i=0;i<26;i++){let x=74+Math.random()*14,y=39+Math.random()*8;
+    if(!isWater(x,y))buildings.push({x,y,w:1.4+Math.random()*1.2,h:1.4+Math.random()*1.2,type:'hist',team:-1,lvl:1});}
+  // Residential zones
+  for(let i=0;i<120;i++){let x=Math.random()*114+2,y=Math.random()*50+6;
+    if(!isWater(x,y))buildings.push({x,y,w:1.2+Math.random(),h:1.2+Math.random(),type:'house',team:-1,lvl:1});}
+  // Initial AI towers per team
+  ORG.forEach((d,di)=>{
+    const dx=8+di*11,dy=18+Math.random()*6;
+    buildings.push({x:dx,y:dy,w:3.4,h:3.4,type:'tower',team:di,lvl:1,tower:true});
+  });
+})();
+let buildingsCount=buildings.length;
+document.getElementById('p-build').textContent=buildingsCount;
+
+/* economy */
+const ec={day:0,invested:0,projects:0,teamLevel:1};
+const goldEl=document.getElementById('hud-gold');
+const pDay=document.getElementById('p-day'),pInv=document.getElementById('p-inv'),pProj=document.getElementById('p-proj'),pLvl=document.getElementById('p-lvl');
+let totalEarned=0;
+
+/* ============ LOG + CHAT ============ */
+const logEls={team:document.getElementById('tab-team'),log:document.getElementById('tab-log')};
+let logLines=0;
+function log(agent,msg,color){
+  logLines++;
+  const line=document.createElement('div');
+  line.className='logline';
+  const hh=String(Math.floor(gameMin/60)).padStart(2,'0'),mm=String(gameMin%60).padStart(2,'0');
+  line.innerHTML=`<span class="t">[${hh}:${mm}]</span> <span class="a ${color||''}">${agent}</span> <span class="m">${msg}</span>`;
+  logEls.log.prepend(line);
+  while(logEls.log.children.length>220)logEls.log.lastChild.remove();
+  addDayLine(msg);
+}
+/* Org tree render */
+const orgBox=document.getElementById('tab-team');
+ORG.forEach((d,di)=>{
+  const div=document.createElement('div');div.className='org-div';
+  div.innerHTML=`<div class="div-h"><b style="color:${d.c}">${d.d}</b><span class="count">${d.m.length}</span></div><div class="members"></div>`;
+  const mems=div.querySelector('.members');
+  d.m.forEach(m=>{
+    const el=document.createElement('div');el.className='member';el.id='cit-'+citizens.find(c=>c.name===m.n&&c.team===di).id;
+    el.innerHTML=`<span class="micon">${m.i}</span><span class="mname">${m.n}</span><span class="mrole">${m.r}</span><span class="mlvl">L1</span><span class="mstatus"></span>`;
+    mems.appendChild(el);
+  });
+  div.querySelector('.div-h').addEventListener('click',()=>div.classList.toggle('open'));
+  orgBox.appendChild(div);
+});
+
+/* day activity feed */
+const dayFeed=document.getElementById('p-day');
+let dayLog=[];
+function addDayLine(msg){dayLog.unshift(dayLogLine(msg));if(dayLog.length>14)dayLog.pop();}
+
+/* ============ AUTONOMOUS AGENT LOGIC ============ */
+const PROJECTS=[
+  {n:"Quantum-Store bauen",rev:9400,type:'build',who:'core'}, {n:"Holo-Marktplatz",rev:5200,type:'build',who:'core'},
+  {n:"GTA-Ära KI-Plattform",rev:41000,type:'build',who:'admin'}, {n:"Neon-Netz ausrollen",rev:7800,type:'build',who:'admin'},
+  {n:"Portfolio-Imperial",rev:12400,type:'rev'}, {n:"DeFi-Tempel",rev:9800,type:'rev'},
+  {n:"SEO-Monument",rev:3300,type:'build'}, {n:"Fusion-Reaktor KI",rev:56000,type:'rev',who:'admin'},
+  {n:"Kunden-Imperium",rev:6700,type:'build'}, {n:"Sakura-Garten-SPA",rev:2400,type:'rev'},
+  {n:"Cloud-Imperium",rev:18000,type:'rev',who:'admin'}, {n:"Auto-Body-AI",rev:3900,type:'rev'}];
+let simSeconds=0;
+let greetingsDone=false;
+
+function tick(sec){
+  simSeconds+=sec;
+  if(!greetingsDone&&simSeconds>1.5){greetingsDone=true;
+    log('CEO · Quantum-Architekt','Verbinde alle Divisionen… Netz aktiv! 🌐','gold');
+    log('Chief AI Officer · KI-Orakel','28 Free-Models online. Kosten: $0.00','green');
+    log('Windows Use · System-Admin','PowerShell-Kern initialisiert · 99.7% uptime','blue');
+    setTimeout(()=>log('OpenCode · Orchestrator','Alle 8 Teams online. Starte City-Engine.','green'),1200);
+    setTimeout(()=>log('Claude Code · Architect','Meta-Architektur validiert. City-Plan OK.','blue'),2400);
+  }
+
+  /* agents act */
+  citizens.forEach(c=>{
+    c.timer-=sec;
+    if(c.state==='travel'){
+      const dx=c.tx-c.x,dy=c.ty-c.y,d=Math.hypot(dx,dy);
+      if(d<1.2){c.state='work';c.timer=3+Math.random()*7;}
+      else{c.x+=dx/d*0.25;c.y+=dy/d*0.16;}
+      return;
+    }
+    if(c.timer>0){ /* talking bubble decay */ if(c.chat&&c.timer<2.2)c.chat=""; return;}
+    // action time
+    const r=Math.random();
+    if(r<0.16){ // travel to project
+      const b=buildings[Math.floor(Math.random()*buildings.length)];
+      c.tx=b.x+b.w/2;c.ty=b.y+b.h/2;c.state='travel';
+    } else if(r<0.34){ // build project
+      const p=PROJECTS[Math.floor(Math.random()*PROJECTS.length)];
+      if(!p.who||p.who===c.t){
+        c.projects++;ec.projects++;c.revenue+=p.rev;totalEarned+=p.rev;ec.day+=p.rev;
+        if(p.type==='build'){spawnBuilding(p,c);c.builds++;}
+        updateHud();
+        const gld=Math.round(p.rev).toString();
+        log(c.name,p.n+' → ◈ '+gld,'team'+c.team);
+        c.chat='◈ '+gld;c.state='work';c.timer=4+Math.random()*8;c.xp+=Math.round(p.rev/1000);
+      } else {c.state='work';c.timer=2+Math.random()*4;}
+    } else if(r<0.52){ // communicate
+      const other=citizens[Math.floor(Math.random()*citizens.length)];
+      if(other.id!==c.id){
+        log(c.name+' ⇄ '+other.name,'Sync: „'+syncMsg()+'“','blue');
+        c.chat='⇄ Sync';other.timer=Math.max(other.timer,3);
+        markChat(c,other);c.state='work';c.timer=3+Math.random()*5;
+      } else {c.state='work';c.timer=2;}
+    } else if(r<0.68){ // upgrade building / level up
+      if(c.xp>c.level*40){c.level++;log(c.name,'↥ LEVEL '+c.level+' — Power erweitert','gold');
+        c.chat='L'+c.level;}c.state='work';c.timer=3+Math.random()*6;
+    } else if(r<0.8){ // invest
+      const amt=Math.round(Math.random()*1200+200);ec.invested+=amt;totalEarned-=amt;
+      log(c.name,'Investiert ◈ '+amt+' in City-Infrastruktur','green');
+      c.chat='◈ '+amt;c.state='work';c.timer=4+Math.random()*6;
+    } else {c.state='work';c.timer=2+Math.random()*6;}
+    updateMemberUI(c);
+  });
+
+  /* economy tick */
+  if(simSeconds>3&&simSeconds%5<0.5){
+    const inc=Math.floor(6+(ec.teamLevel*2)+Math.random()*10);
+    ec.day+=inc;totalEarned+=inc;ec.invested+=Math.floor(inc*0.3);
+    updateHud();
+  }
+}
+function syncMsg(){const s=['Deploy v4.2 OK','Auto-Test grün','Daten fusioniert','Holo-Patch live','Fusion-Reaktor stabil','Krypto-Gate frei','Neue Route offen','Quantum-Link sicher','Cache optimiert','Feature-Sync 100%'];return s[Math.floor(Math.random()*s.length)];}
+function markChat(a,b){
+  const ea=document.getElementById('cit-'+a.id),eb=document.getElementById('cit-'+b.id);
+  if(ea){ea.classList.add('chatting');setTimeout(()=>ea.classList.remove('chatting'),2200);}
+  if(eb){eb.classList.add('chatting');setTimeout(()=>eb.classList.remove('chatting'),2200);}
+}
+function spawnBuilding(p,c){
+  const x=Math.max(3,Math.min(110,c.x+Math.random()*10-5));
+  const y=Math.max(3,Math.min(50,c.y+Math.random()*6-3));
+  if(isWater(x,y)){x<72?x=68:y=Math.max(2,y-3);}
+  const n=buildings.filter(b=>b.team===c.team).length;
+  buildings.push({x,y,w:2+Math.random()*1.5,h:2+Math.random()*1.5,type:'tower',team:c.team,lvl:1,tower:true,newborn:true});
+  buildingsCount++;document.getElementById('p-build').textContent=buildingsCount;
+  c.projects++;ec.projects++;
+  updateHud();
+}
+function updateHud(){
+  goldEl.textContent='◈ '+Math.round(totalEarned).toLocaleString('de-CH');
+  pDay.textContent='◈ '+Math.round(ec.day).toLocaleString('de-CH');
+  pInv.textContent='◈ '+Math.round(ec.invested).toLocaleString('de-CH');
+  pProj.textContent=ec.projects;
+  ec.teamLevel=1+Math.floor(ec.projects/8);
+  pLvl.textContent=ec.teamLevel;
+  document.getElementById('hud-gold').textContent='◈ '+Math.round(totalEarned).toLocaleString('de-CH');
+}
+function updateMemberUI(c){
+  const el=document.getElementById('cit-'+c.id);
+  if(el){const lv=el.querySelector('.mlvl');if(lv)lv.textContent='L'+c.level;
+    const st=el.querySelector('.mstatus');if(st){st.style.background=c.state==='travel'?'#ffb300':c.state==='chat'?'#f0f':'#00ff88';}
+    if(c.state==='work'){el.classList.add('working');setTimeout(()=>el.classList.remove('working'),2000);}}
+}
+function dayLogLine(msg){const hh=String(Math.floor(gameMin/60)).padStart(2,'0'),mm=String(gameMin%60).padStart(2,'0');return `[${hh}:${mm}] ${msg}`;}
+
+/* ============ CANVAS RENDERING ============ */
+let zoom=1,panX=0,panY=0,drag=false,sx=0,sy=0,px0=0,py0=0;
+let hover={x:-1,y:-1};
+cv.addEventListener('mousedown',e=>{drag=true;sx=e.offsetX;sy=e.offsetY;px0=panX;py0=panY;});
+cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();hover.x=e.offsetX;hover.y=e.offsetY;
+  if(drag){panX=px0+(e.offsetX-sx)/zoom;panY=py0+(e.offsetY-sy)/zoom;}});
+cv.addEventListener('mouseup',e=>{if(drag&&Math.hypot(e.offsetX-sx,e.offsetY-sy)<5){pickCitizen(e);}drag=false;});
+cv.addEventListener('wheel',e=>{e.preventDefault();const f=e.deltaY<0?1.12:0.89;zoom=Math.max(.4,Math.min(6,zoom*f));},{passive:false});
+cv.addEventListener('dblclick',e=>{zoom=1;panX=0;panY=0;});
+
+const colors={
+  water:['#05203c','#05314f','#063552','#063a58'],
+  land:'#0a1410',street:'#1c2a33',streetEdge:'#2a3d48',
+  hist:'#7a5a3a',house:'#24303f',tower:['#0aaeff','#ffd700','#00ff88','#ff6bd6','#c77dff','#ff9d5c','#5aaaff','#00ffd5']
+};
+
+function render(time){
+  cx.clearRect(0,0,W,H);
+  const viewX=panX-8/zoom,viewY=panY-6/zoom,vw=W/zoom,vh=H/zoom;
+  cx.save();cx.translate(-viewX*zoom,-viewY*zoom);cx.scale(zoom,zoom);
+
+  /* grid size */
+  const GW=W/zoom,GH=H/zoom;
+  /* water */
+  for(let y=0;y<90;y++)for(let x=0;x<120;x++){
+    if(isWater(x,y)){cx.fillStyle=colors.water[(x+y+Math.floor(time/30))%colors.water.length];cx.fillRect(x,y,1,1);}
+    else{cx.fillStyle='#0c1712';cx.fillRect(x,y,1,1);}
+  }
+  /* shimmer waves */
+  cx.strokeStyle='rgba(0,180,255,.18)';cx.lineWidth=.5;
+  for(let i=0;i<9;i++){const wy=64+((time/500+i*11)%26);cx.beginPath();cx.moveTo(2,wy);
+    for(let x=2;x<118;x+=2)cx.lineTo(x,wy+Math.sin(x*.3+time/300+i)*.4);cx.stroke();}
+
+  /* streets */
+  cx.lineCap='round';
+  streets.forEach(s=>{
+    cx.strokeStyle='rgba(0,0,0,.5)';cx.lineWidth=s.w+.8;cx.beginPath();
+    s.pts.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.stroke();
+    cx.strokeStyle='#24353f';cx.lineWidth=s.w;cx.beginPath();
+    s.pts.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.stroke();
+  });
+
+  /* district labels faint */
+  cx.font='2.2px monospace';cx.textAlign='center';
+  districts.forEach(d=>{
+    if(d.y>58)return;
+    cx.fillStyle='rgba(255,255,255,.06)';
+    cx.fillRect(d.x,d.y,d.w,d.h);
+    cx.fillStyle='rgba(200,255,240,.22)';
+    cx.fillText(d.name,d.x+d.w/2,d.y+d.h+.6);
+  });
+
+  /* buildings */
+  buildings.forEach(b=>{
+    const x=b.x,y=b.y,w=b.w,h=b.h;
+    const glow=cx.globalAlpha;
+    if(b.tower){
+      const tc=colors.tower[b.team%colors.tower.length];
+      cx.shadowColor=tc;cx.shadowBlur=8*zoom<8?8/zoom:8;
+      cx.fillStyle=b.team<0?'#1a2a3a':tc;cx.globalAlpha=b.newborn?.6:1;
+      cx.fillRect(x,y,w,h);
+      /* windows */
+      cx.globalAlpha=b.newborn?.7:1;cx.fillStyle='#eaffff';
+      for(let wy=y+.5;wy<y+h-.2;wy+=.45)for(let wx=x+.4;wx<x+w-.2;wx+=.45)
+        cx.fillRect(wx,wy,.16,.22);
+      cx.shadowBlur=0;
+      /* top light */
+      cx.fillStyle=tc;cx.globalAlpha=.8+Math.sin(time/200+x)*.2;
+      cx.beginPath();cx.arc(x+w/2,y,1.4,0,7);cx.fill();
+      // build rings
+      if(b.buildRings){cx.globalAlpha=b.buildRings.alpha;
+        cx.strokeStyle='#0ff';cx.beginPath();cx.arc(x+w/2,y,3+b.buildRings.r,0,7);cx.stroke();
+        b.buildRings.r+=.06;b.buildRings.alpha-=.01;
+        if(b.buildRings.alpha<=0)b.buildRings=null;}
+      cx.globalAlpha=glow;
+    } else if(b.type==='hist'){
+      cx.fillStyle='#6b4a2f';cx.fillRect(x,y,w,h);
+      cx.fillStyle='#8a6a45';cx.fillRect(x+.15,y+.15,w-.3,h-.3);
+      cx.fillStyle='#a98f6a';cx.fillRect(x+w/2-.2,y-.3,.4,h+.3); // tower spikes
+    } else {
+      cx.fillStyle='#1e2936';cx.fillRect(x,y,w,h);
+      cx.fillStyle='#2c3c4a';cx.fillRect(x+.1,y+.1,w-.2,h-.2);
+      cx.fillStyle='rgba(150,255,220,.5)';cx.fillRect(x-w*.5,y+1,.2,.15);
+      cx.fillStyle='rgba(150,255,220,.2)';/*st}
+    }
+  });
+
+  /* new building rings */
+  buildings.forEach(b=>{});
+
+  /* citizens */
+  citizens.forEach(c=>{
+    const tc=colors.tower[c.team%colors.tower.length];
+    cx.globalAlpha=.95;
+    cx.shadowColor=tc;cx.shadowBlur=6/zoom;
+    cx.fillStyle=tc;
+    cx.beginPath();cx.arc(c.x,c.y,c.t==='admin'?.5:.4,0,7);cx.fill();
+    cx.shadowBlur=0;
+    /* direction */
+    if(c.state==='travel'){cx.strokeStyle=tc;cx.lineWidth=.15;cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(c.tx,c.ty);cx.stroke();}
+    /* chat bubble */
+    if(c.chat){cx.font='1.2px monospace';cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.75)';
+      cx.fillRect(c.x-3.4,c.y-2.6,6.8,2.4);
+      cx.strokeStyle=tc;cx.lineWidth=.15;cx.strokeRect(c.x-3.4,c.y-2.6,6.8,2.4);
+      cx.fillStyle='#fff';cx.fillText(c.chat,c.x,c.y-1.1);}
+  });
+  cx.restore();
+
+  /* vignette */
+  const g=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.25,W/2,H/2,Math.max(W,H)*.7);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,20,.5)');
+  cx.fillStyle=g;cx.fillRect(0,0,W,H);
+
+  /* city name overlay */
+  cx.save();cx.font='700 26px Segoe UI';cx.textAlign='center';
+  cx.shadowColor='#00ffd5';cx.shadowBlur=24;
+  cx.fillStyle='rgba(0,255,213,.14)';
+  cx.fillText('RAPPERSWIL-JONA — 2250',W/2,44);
+  cx.restore();
+}
+
+function pickCitizen(e){
+  const r=cv.getBoundingClientRect();
+  const worldX=(((e.offsetX/zoom)-0)+panX),worldY=(((e.offsetY/zoom))+panY);
+  let best=null,bd=99;
+  citizens.forEach(c=>{const d=Math.hypot(c.x-worldX,c.y-worldY);if(d<bd){bd=d;best=c;}});
+  if(best&&bd<2.2){
+    log(best.name+' (Angeklickt)',`Level ${best.level} · Erlös ◈ ${Math.round(best.revenue)} · ${best.role}`,'team'+best.team);
+    best.chat='L'+best.level;best.timer=3;
+    const el=document.getElementById('cit-'+best.id);if(el){el.classList.add('working');setTimeout(()=>el.classList.remove('working'),2000);}
+  }
+}
+function switchTab(el,id){
+  document.querySelectorAll('#side .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-team').style.display=id==='tab-team'?'block':'none';
+  document.getElementById('tab-log').style.display=id==='tab-log'?'block':'none';
+}
+
+/* ensure first div open */
+setTimeout(()=>{Array.from(document.querySelectorAll('.org-div')).slice(0,2).forEach(d=>d.classList.add('open'));},400);
+
+/* ============ MAIN LOOP ============ */
+let last=performance.now();
+function loop(t){
+  const dt=Math.min(1.2,(t-last)/1000);last=t;
+  if(simSeconds>3){tick(dt);}
+  render(t);
+  requestAnimationFrame(loop);
+}
+setInterval(()=>{if(simSeconds<=.5)firstActivity();},400);
+function firstActivity(){setTimeout(()=>{tick(0.5);},200);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
